@@ -16,10 +16,9 @@ It turns out you won't exactly be taking on Google for this challange as you'll 
 
 ## Submitting Your Solution
 
-To submit your code exercise:
-- Fork this repository
-- Implement your solution in the fork
-- Submit a pull request back to this repository with your solution (we won't actually be merging the request, but it lets us know you can perform basic git workflow).
+To submit your code challenge:
+- Store your solution at your favorite git host (like github or bitbucket).
+- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository.
 
 ## Bonus Points
 
