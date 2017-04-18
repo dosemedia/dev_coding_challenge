@@ -1,6 +1,4 @@
-# y
-
-> y
+# DOSE Digital Assistant Vue-App
 
 ## Build Setup
 
@@ -26,5 +24,9 @@ npm run e2e
 # run all tests
 npm test
 ```
+
+## Development
+
+This project was created using the Vue.js [CLI](https://github.com/vuejs/vue-cli) initialized with the webpack template, and incorporated [Bootstrap.](http://getbootstrap.com/)
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
