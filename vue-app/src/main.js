@@ -4,9 +4,6 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import jQuery from 'jquery'
-global.jQuery = jQuery
-var Bootstrap = require('bootstrap')
 
 Vue.config.productionTip = false
 

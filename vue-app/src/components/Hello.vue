@@ -2,8 +2,7 @@
   <div class="hello container">
     <h1>{{ msg }}</h1>
     <div class="row">
-      <div class="col-sm-6">Column small 6</div>
-      <div class="col-sm-6">Column 2 small 6</div>
+      
     </div>
   </div>
 </template>
