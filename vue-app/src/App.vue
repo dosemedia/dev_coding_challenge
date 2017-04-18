@@ -19,6 +19,9 @@
     </div>
     <div class="row conversation">
       <div class="row">
+        <div class="response col-sm-offset-2 col-sm-10 col-xs-12" v-if="listening">LISTENING...</div>
+      </div>
+      <div class="row">
         <div class="response col-sm-offset-2 col-sm-10 col-xs-12">YOU: <span class="reactive" v-if="speech !== '' && speech !== undefined">"{{ speech }}"</span></div>
       </div>
       <div class="row">
@@ -29,11 +32,6 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
-/* eslint-disable indent */
-import jQuery from 'jquery'
-global.jQuery = jQuery
-var Bootstrap = require('bootstrap')
 
 import {ApiAiClient, ApiAiStreamClient} from 'api-ai-javascript'
 const client = new ApiAiClient({accessToken: 'ab34fb00765b4b6f9e8c1084345d94da', streamClientClass: ApiAiStreamClient})
@@ -43,59 +41,60 @@ export default {
   data () {
     return {
       speech: this.speech,
-      result: this.result
+      result: this.result,
+      listening: this.listening
     }
   },
   methods: {
-  startStream () {
-    if (this.streamClient) {
-      this.closeStream()
-    }
+    startStream () {
+      if (this.streamClient) {
+        this.closeStream()
+      }
 
-    this.streamClient = client.createStreamClient({
-      onInit: () => {
-        this.streamClient.open()
-      },
-      onOpen: () => {
-        this.streamClient.startListening()
+      this.streamClient = client.createStreamClient({
+        onInit: () => {
+          this.streamClient.open()
+        },
+        onOpen: () => {
+          this.streamClient.startListening()
 
-        setTimeout(() => {
-          this.stopStream()
-        }, 4000)
-      },
-      onClose: () => {
-      },
-      onStartListening: () => {
-        this.error = ''
-        this.speech = ''
-        this.listening = true
-        this.event_count = 0
-      },
-      onStopListening: () => {
-        this.listening = false
-      },
-      onResults: (arg) => {
-        if ((arg) && (arg.result) && (arg.result.speech)) {
+          setTimeout(() => {
+            this.stopStream()
+          }, 4000)
+        },
+        onClose: () => {
+        },
+        onStartListening: () => {
+          this.error = ''
+          this.speech = ''
+          this.listening = true
+          this.event_count = 0
+        },
+        onStopListening: () => {
+          this.listening = false
+        },
+        onResults: (arg) => {
+          if ((arg) && (arg.result) && (arg.result.speech)) {
             this.result = arg.result.speech
-        }
-        if ((arg) && (arg.result) && (arg.result.resolvedQuery)) {
+          }
+          if ((arg) && (arg.result) && (arg.result.resolvedQuery)) {
             this.speech = arg.result.resolvedQuery
-        }
-        if ((arg) && (arg.result) && (arg.result.action === 'Redirect') && (arg.result.parameters.tag !== undefined) && (arg.result.parameters.name === 'Dose')) {
+          }
+          if ((arg) && (arg.result) && (arg.result.action === 'Redirect') && (arg.result.parameters.tag !== undefined) && (arg.result.parameters.name === 'Dose')) {
             this.tag = arg.result.parameters.tag
             this.redirect()
             this.closeStream()
-        }
-      },
+          }
+        },
 
-      onEvent: (code, message) => {
-        this.event_count = this.event_count + 1
-      },
-      onError: (code, message) => {
-        this.closeStream()
-      }
-    })
-    this.streamClient.init()
+        onEvent: (code, message) => {
+          this.event_count = this.event_count + 1
+        },
+        onError: (code, message) => {
+          this.closeStream()
+        }
+      })
+      this.streamClient.init()
     },
 
     redirect () {
@@ -116,7 +115,7 @@ export default {
     closeStream () {
       if (this.streamClient) {
         if ((this.streamClient) && (this.listening)) {
-            this.streamClient.stopListening()
+          this.streamClient.stopListening()
         }
         this.streamClient.close()
         this.streamClient = null
@@ -146,6 +145,18 @@ body {
   color: #b7c0cd;
 }
 
+.row {
+  margin: 20px 0;
+}
+
+.icon {
+  margin: 0 0 20px;
+  padding: 50px 10px 25px;
+  background-color: #1f2c3e;
+  font-size: 50px;
+  color: white;
+}
+
 .btnClass {
   padding: 10px;
   margin-bottom: 10px;
@@ -170,10 +181,6 @@ body {
   background-color: #E53935; 
 }
 
-.row {
-  margin: 20px 0;
-}
-
 .conversation {
   border: 1px solid #b7c0cd;
   margin: 10px 20px;
@@ -190,12 +197,5 @@ body {
   font-size: 16px;
 }
 
-.icon {
-  margin: 0 0 20px;
-  padding: 50px 10px 25px;
-  background-color: #1f2c3e;
-  font-size: 50px;
-  color: white;
-}
 
 </style>
