@@ -1,15 +1,28 @@
 <template>
   <div id="app">
-    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    <div class="row icon">
+      <div class="col-xs-12">
+        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+      </div>
+    </div>
     <router-view></router-view>
     <div class="row">
-      <div class="col-xs-12">
-        <button v-on:click="startStream">Add 1</button>
+      <div class="col-sm-4 col-xs-12">
+        <button class="btnClass start" v-on:click="startStream">START</button>
+      </div> 
+      <div class="col-sm-4 col-xs-12">
+        <button class="btnClass clear" v-on:click="clearWords">CLEAR</button>
+      </div>
+      <div class="col-sm-4 col-xs-12">
+        <button class="btnClass stop" v-on:click="closeStream">STOP</button>
       </div>  
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <button v-on:click="closeStream">Add 1</button>
+    <div class="row conversation">
+      <div class="row">
+        <div class="response col-sm-offset-2 col-sm-10 col-xs-12">YOU: <span class="reactive" v-if="speech !== '' && speech !== undefined">"{{ speech }}"</span></div>
+      </div>
+      <div class="row">
+        <div class="response col-sm-offset-2 col-sm-10 col-xs-12">DOSE: <span class="reactive" v-if="result !== '' && result !== undefined">"{{ result }}"</span></div>
       </div>
     </div>
   </div>
@@ -25,19 +38,14 @@ var Bootstrap = require('bootstrap')
 import {ApiAiClient, ApiAiStreamClient} from 'api-ai-javascript'
 const client = new ApiAiClient({accessToken: 'ab34fb00765b4b6f9e8c1084345d94da', streamClientClass: ApiAiStreamClient})
 
-const streamClient = client.createStreamClient({
-  onInit: () => {
-    console.log('on init function')
-    streamClient.open()
-  }
-})
-
-// streamClient.init()
-// streamClient.startListening()
-// streamClient.stopListening()
-
 export default {
   name: 'app',
+  data () {
+    return {
+      speech: this.speech,
+      result: this.result
+    }
+  },
   methods: {
   startStream () {
     if (this.streamClient) {
@@ -46,11 +54,9 @@ export default {
 
     this.streamClient = client.createStreamClient({
       onInit: () => {
-        console.log('onInit')
         this.streamClient.open()
       },
       onOpen: () => {
-        console.log('onOpen')
         this.streamClient.startListening()
 
         setTimeout(() => {
@@ -58,41 +64,47 @@ export default {
         }, 4000)
       },
       onClose: () => {
-        console.log('onClose')
       },
       onStartListening: () => {
-        console.log('onStartListening')
         this.error = ''
         this.speech = ''
         this.listening = true
         this.event_count = 0
       },
       onStopListening: () => {
-        console.log('onStopListening')
         this.listening = false
       },
       onResults: (arg) => {
-        console.log('onResults', arg)
         if ((arg) && (arg.result) && (arg.result.speech)) {
             this.result = arg.result.speech
         }
         if ((arg) && (arg.result) && (arg.result.resolvedQuery)) {
             this.speech = arg.result.resolvedQuery
         }
-        this.closeStream()
+        if ((arg) && (arg.result) && (arg.result.action === 'Redirect') && (arg.result.parameters.tag !== undefined) && (arg.result.parameters.name === 'Dose')) {
+            this.tag = arg.result.parameters.tag
+            this.redirect()
+            this.closeStream()
+        }
       },
-      onEvent: (code, message) => {
-        console.log('onEvent : ' + code + ' - ', message)
-        this.event_count = this.event_count + 1
 
-        // this.blinkMic()
+      onEvent: (code, message) => {
+        this.event_count = this.event_count + 1
       },
       onError: (code, message) => {
-        console.log('onEvent : ' + code + ' - ', message)
         this.closeStream()
       }
     })
     this.streamClient.init()
+    },
+
+    redirect () {
+      if (this.tag !== undefined && this.tag !== null && this.tag !== '') {
+        var url = 'https://dose.com/tagged/' + this.tag
+        setTimeout(() => {
+          window.open(url, '_blank')
+        }, 2000)
+      }
     },
 
     stopStream () {
@@ -109,7 +121,13 @@ export default {
         this.streamClient.close()
         this.streamClient = null
       }
+    },
+    clearWords () {
+      this.speech = ''
+      this.result = ''
     }
+  },
+  mounted () {
   }
 }
 
@@ -117,17 +135,67 @@ export default {
 
 <style>
 @import '../node_modules/bootstrap/dist/css/bootstrap.css';
+body {
+  background-color: #021730;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #b7c0cd;
+}
+
+.btnClass {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 80px;
+  border: none;
+  box-shadow: 0 6px 5px 0 rgba(0, 0, 0, 0.35);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  outline: none;
+}
+
+.btnClass.start {
+  background-color: #00897B;
+}
+
+.btnClass.clear {
+  background-color: #1E88E5;
+}
+
+.btnClass.stop {
+  background-color: #E53935; 
 }
 
 .row {
   margin: 20px 0;
+}
+
+.conversation {
+  border: 1px solid #b7c0cd;
+  margin: 10px 20px;
+}
+
+.response {
+  text-align: left;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.reactive {
+  font-weight: normal;
+  font-size: 16px;
+}
+
+.icon {
+  margin: 0 0 20px;
+  padding: 50px 10px 25px;
+  background-color: #1f2c3e;
+  font-size: 50px;
+  color: white;
 }
 
 </style>

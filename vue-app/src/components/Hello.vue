@@ -2,7 +2,9 @@
   <div class="hello container">
     <h1>{{ msg }}</h1>
     <div class="row">
-      
+      <div class="col-xs-12">
+        <p>{{ directions }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -12,7 +14,8 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to DOSE Digital Assistant'
+      msg: 'Welcome to DOSE Digital Assistant',
+      directions: 'Simply hit "START" and I will begin listening. Start each command with "Dose, show me ___" and the tagged page you would like to see. You can clear the conversation at any time with the "CLEAR" button, and I will stop listening if you press the "STOP" button. Go ahead, give me a shot!'
     }
   }
 }
