@@ -1,31 +1,50 @@
 <template>
   <div id="app">
-    <div class="row icon">
-      <div class="col-xs-12">
-        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+    <div v-show="noTag">
+      <div class="row icon">
+        <div class="col-xs-12">
+          <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+        </div>
+      </div>
+      <router-view></router-view>
+      <div class="row">
+        <div class="col-sm-4 col-xs-12">
+          <button class="btnClass start" v-on:click="startStream">START</button>
+        </div> 
+        <div class="col-sm-4 col-xs-12">
+          <button class="btnClass clear" v-on:click="clearWords">CLEAR</button>
+        </div>
+        <div class="col-sm-4 col-xs-12">
+          <button class="btnClass stop" v-on:click="closeStream">STOP</button>
+        </div>  
+      </div>
+      <div class="row conversation">
+        <div class="row">
+          <div class="response col-sm-offset-2 col-sm-10 col-xs-12" v-if="listening">LISTENING...</div>
+        </div>
+        <div class="row">
+          <div class="response col-sm-offset-2 col-sm-10 col-xs-12">YOU: <span class="reactive" v-if="speech !== '' && speech !== undefined">"{{ speech }}"</span></div>
+        </div>
+        <div class="row">
+          <div class="response col-sm-offset-2 col-sm-10 col-xs-12">DOSE: <span class="reactive" v-if="result !== '' && result !== undefined">"{{ result }}"</span></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-offset-4 col-sm-12">
+          <button class="btnClass start" v-on:click="noTag = !noTag">Toggle</button>
+        </div>
       </div>
     </div>
-    <router-view></router-view>
-    <div class="row">
-      <div class="col-sm-4 col-xs-12">
-        <button class="btnClass start" v-on:click="startStream">START</button>
-      </div> 
-      <div class="col-sm-4 col-xs-12">
-        <button class="btnClass clear" v-on:click="clearWords">CLEAR</button>
-      </div>
-      <div class="col-sm-4 col-xs-12">
-        <button class="btnClass stop" v-on:click="closeStream">STOP</button>
-      </div>  
-    </div>
-    <div class="row conversation">
+    <div v-show="!noTag">
+      This is where the form will go.
+      <input v-model="name"></input>
+      <input v-model="email"></input>
+      <input v-model="category"></input>
+      <button v-on:click="submitForm">SUBMIT</button>
       <div class="row">
-        <div class="response col-sm-offset-2 col-sm-10 col-xs-12" v-if="listening">LISTENING...</div>
-      </div>
-      <div class="row">
-        <div class="response col-sm-offset-2 col-sm-10 col-xs-12">YOU: <span class="reactive" v-if="speech !== '' && speech !== undefined">"{{ speech }}"</span></div>
-      </div>
-      <div class="row">
-        <div class="response col-sm-offset-2 col-sm-10 col-xs-12">DOSE: <span class="reactive" v-if="result !== '' && result !== undefined">"{{ result }}"</span></div>
+        <div class="col-sm-offset-4 col-sm-12">
+          <button class="btnClass start" v-on:click="noTag = !noTag">Toggle</button>
+        </div>
       </div>
     </div>
   </div>
@@ -35,6 +54,7 @@
 
 import {ApiAiClient, ApiAiStreamClient} from 'api-ai-javascript'
 const client = new ApiAiClient({accessToken: 'ab34fb00765b4b6f9e8c1084345d94da', streamClientClass: ApiAiStreamClient})
+import jQuery from 'jquery'
 
 export default {
   name: 'app',
@@ -42,7 +62,11 @@ export default {
     return {
       speech: this.speech,
       result: this.result,
-      listening: this.listening
+      listening: this.listening,
+      noTag: true,
+      name: '',
+      email: '',
+      category: ''
     }
   },
   methods: {
@@ -124,6 +148,22 @@ export default {
     clearWords () {
       this.speech = ''
       this.result = ''
+    },
+    submitForm () {
+      var formData = {}
+      if (this.name !== '' && this.email !== '' && this.category !== '') {
+        formData.name = this.name
+        formData.email = this.email
+        formData.category = this.category
+        jQuery.ajax({
+          type: 'POST',
+          url: 'http://requestb.in/1mmrwu31',
+          data: formData,
+          succcess: function (data) {
+            console.log(data)
+          }
+        })
+      }
     }
   },
   mounted () {
