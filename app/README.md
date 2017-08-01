@@ -5,6 +5,7 @@ For completion of the Dose coding challenge.
 __Demo__: http://johnsylvain.github.io/dev_coding_challenge/index.html
 
 ## Development
+Ensure your terminal is pointed towards the `app` directory.
 ```bash
 # install dependencies
 npm install

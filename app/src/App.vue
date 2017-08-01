@@ -46,7 +46,11 @@
         this.listening = true;
         sr.startStream().then(data => {
           this.listening = false;
+
           this.result = data.result.resolvedQuery
+          if (data.result.parameters.dose) {
+            this.result = this.result.replace(data.result.parameters.dose, 'Dose,')
+          }
 
           window.open(`http://dose.com/tagged/${data.result.parameters.tag}`, '_blank')
         })
