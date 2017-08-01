@@ -2,7 +2,7 @@
 
 For completion of the Dose coding challenge.
 
-__Demo__: http://johnsylvain.github.io/dev_coding_challenge
+__Demo__: http://johnsylvain.github.io/dev_coding_challenge/
 
 ## Development
 ```bash
