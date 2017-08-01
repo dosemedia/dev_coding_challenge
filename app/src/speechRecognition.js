@@ -31,9 +31,6 @@ export default class SpeechRecognition {
             reject(err)
           })
       };
-      this.recognition.onend = function() {
-        reject({msg: 'Sorry, I did\'t catch that.'})
-      }
     })
   }
 
