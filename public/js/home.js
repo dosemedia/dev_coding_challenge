@@ -56,7 +56,7 @@ function stopRecognition() {
     recognition.stop();
     recognition = null;
   }
-  updateRec();
+  // updateRec();
 }
 
 function switchRecognition() {
@@ -72,9 +72,9 @@ function setInput(text) {
   send();
 }
 
-function updateRec() {
-  $recBtn.text(recognition ? "Stop" : "Speak");
-}
+// function updateRec() {
+//   $recBtn.addClass(recognition ? "notRecording" : "recording");
+// }
 
 function send() {
   let text = $speechInput.val();
