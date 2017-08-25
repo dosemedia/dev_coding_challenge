@@ -13,13 +13,13 @@ let accessToken = "8f1c40388431475ea9c952b56758ea03",
 $(document).ready(function() {
   $speechInput = $("#speech");
   $recBtn = $("#rec");
-  $speechInput.keypress(function(event) {
+  $speechInput.mousedown(function(event) {
     if (event.which == 13) {
       event.preventDefault();
       send();
     }
   });
-  $recBtn.on("click", function(event) {
+  $recBtn.on("mousedown", function(event) {
     $speechInput.val('');
     switchRecognition();
   });
@@ -30,7 +30,7 @@ function startRecognition() {
 
   recognition.onstart = function(event) {
     respond(messageRecording);
-    // updateRec();
+    updateRec();
   };
   recognition.onresult = function(event) {
     recognition.onend = null;
@@ -56,7 +56,7 @@ function stopRecognition() {
     recognition.stop();
     recognition = null;
   }
-  // updateRec();
+  updateRec();
 }
 
 function switchRecognition() {
@@ -72,9 +72,17 @@ function setInput(text) {
   send();
 }
 
-// function updateRec() {
-//   $recBtn.addClass(recognition ? "notRecording" : "recording");
-// }
+function updateRec() {
+  if (recognition) {
+    $recBtn.removeClass("notRecording");
+    $recBtn.addClass("recording");
+  }
+  else if (!recognition) {
+    $recBtn.removeClass("recording");
+    $recBtn.addClass("notRecording");
+  }
+
+}
 
 function send() {
   let text = $speechInput.val();

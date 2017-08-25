@@ -1,6 +1,6 @@
 html, body {
   height: 100vh;
-  /*overflow: hidden;*/
+  overflow: hidden;
 }
 
 .button {
@@ -10,6 +10,7 @@ html, body {
   /*flex-direction: column;*/
   justify-content: center;
   align-items: center;
+  background-color: #f8f9fa;
 }
 
 .btn {
@@ -19,21 +20,46 @@ html, body {
   height: 100px;
   width: 100px;
   border-radius: 50%;
+  background-color: white;
+}
+
+.btn:hover {
+  transform: scale(1.1);
 }
 
 .mic {
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 30px;
 }
 
 #speech {
   display: none;
 }
 
+.navbar {
+  box-shadow: 1px 4px 5px #999;
+  background-color: #66656c !important;
+}
+
+.navbar a {
+  font-family: 'Permanent Marker', cursive;
+  color: black !important;
+}
+
+.btn-outline-info:hover {
+  background-color: #fff;
+}
+
+.btn-outline-info.focus, .btn-outline-info:focus {
+    box-shadow: 0 0 0 0 rgba(23,162,184,.5);
+}
+
 .recording {
-  background color: #17a2b8 !imporant;
+  box-shadow: 0 0 0 6px rgba(23,162,184,.5) !important;
+  /*background-color: #17a2b8 !important;*/
 }
 
 .notRecording {
-  background color: #fff !imporant;
+  box-shadow: 0 0 0 0 rgba(23,162,184,.5) !important;
+  background-color: #fff !important;
 }
