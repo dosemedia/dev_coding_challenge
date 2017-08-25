@@ -30,7 +30,7 @@ function startRecognition() {
 
   recognition.onstart = function(event) {
     respond(messageRecording);
-    updateRec();
+    // updateRec();
   };
   recognition.onresult = function(event) {
     recognition.onend = null;
