@@ -21,7 +21,7 @@ The biggest challenge was communicating with API.ai. I spent four to five hours 
 
 Click here to watch a video demo of the app.
 
-##Tech Stack
+## Tech Stack
 
 1. CSS
 2. Node.js
@@ -30,7 +30,7 @@ Click here to watch a video demo of the app.
 5. jQuery
 6. HTML
 
-##API's
+## API's
 
 1. HTML5 Speech Recognition API
 2. Web Speech API
