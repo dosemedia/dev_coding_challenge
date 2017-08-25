@@ -1,14 +1,28 @@
-let accessToken = "8f1c40388431475ea9c952b56758ea03",
-    baseUrl = "https://api.api.ai/v1/",
-    $speechInput,
-    $recBtn,
-    recognition,
-    messageRecording = "Recording...",
-    messageRecordingEnd = "",
-    messageCouldntHear = "I couldn't hear you, could you say that again?",
-    messageInternalError = "Oh no, there has been an internal server error",
-    messageSorry = "I'm sorry, I don't have the answer to that yet.",
-    messageSuccess = "Ok, lets see what I can find.";
+/* eslint-disable quotes */
+/* eslint-disable no-undef */
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable eqeqeq */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-unused-vars */
+/* eslint-disable func-style */
+/* eslint-disable new-cap */
+/* eslint-disable prefer-template */
+/* eslint-disable quote-props */
+/* eslint-disable object-shorthand */
+'use strict';
+
+const accessToken = "8f1c40388431475ea9c952b56758ea03";
+const baseUrl = "https://api.api.ai/v1/";
+const messageRecording = "Recording...";
+const messageRecordingEnd = "";
+const messageCouldntHear = "I couldn't hear you, could you say that again?";
+const messageInternalError = "Oh no, there has been an internal server error";
+const messageSorry = "I'm sorry, I don't have the answer to that yet.";
+const messageSuccess = "Ok, lets see what I can find.";
+
+let $speechInput;
+let $recBtn;
+let recognition;
 
 $(document).ready(function() {
   $speechInput = $("#speech");
@@ -36,6 +50,7 @@ function startRecognition() {
     recognition.onend = null;
 
     let text = "";
+
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       text += event.results[i][0].transcript;
     }
@@ -62,7 +77,8 @@ function stopRecognition() {
 function switchRecognition() {
   if (recognition) {
     stopRecognition();
-  } else {
+  }
+  else {
     startRecognition();
   }
 }
@@ -81,11 +97,11 @@ function updateRec() {
     $recBtn.removeClass("recording");
     $recBtn.addClass("notRecording");
   }
-
 }
 
 function send() {
-  let text = $speechInput.val();
+  const text = $speechInput.val();
+
   $.ajax({
     type: "POST",
     url: baseUrl + "query?v=20150910",
@@ -94,7 +110,7 @@ function send() {
     headers: {
       "Authorization": "Bearer " + accessToken
     },
-    data: JSON.stringify({query: text, lang: "en", sessionId: "digitalassistant"}),
+    data: JSON.stringify({ query: text, lang: "en", sessionId: "digitalassistant" }),
     success: function(data) {
       prepareResponse(data);
     },
@@ -115,18 +131,15 @@ function prepareResponse(val) {
     respond(messageSuccess);
   }
 
-  else if (val){
+  else if (val) {
     respond(messageSorry);
   }
 }
 
 function respond(val) {
-  if (val === messageRecording || val === messageRecordingEnd) {
-    $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
-  }
-
   if (val !== messageRecording) {
-    let msg = new SpeechSynthesisUtterance();
+    const msg = new SpeechSynthesisUtterance();
+
     msg.voiceURI = "native";
     msg.text = val;
     msg.lang = "en-US";

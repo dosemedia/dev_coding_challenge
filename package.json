@@ -1,8 +1,8 @@
 {
-  "name": "dev_coding_challenge",
+  "name": "DOSE Digital Assistant",
   "version": "0.1.0",
   "description": "Digital Assistant",
-  "main": "index.js",
+  "main": "server.js",
   "repository": "https://github.com/danielpencak/dev_coding_challenge.git",
   "author": "Daniel Pencak <danielpencak@gmail.com>",
   "license": "MIT",
