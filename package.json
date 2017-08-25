@@ -13,6 +13,7 @@
     "node": "8.2.1"
   },
   "dependencies": {
+    "express": "^4.15.4",
     "nodemon": "^1.11.0"
   }
 }
