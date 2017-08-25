@@ -4,9 +4,11 @@ let accessToken = "8f1c40388431475ea9c952b56758ea03",
     $recBtn,
     recognition,
     messageRecording = "Recording...",
+    messageRecordingEnd = "",
     messageCouldntHear = "I couldn't hear you, could you say that again?",
     messageInternalError = "Oh no, there has been an internal server error",
-    messageSorry = "I'm sorry, I don't have the answer to that yet.";
+    messageSorry = "I'm sorry, I don't have the answer to that yet.",
+    messageSuccess = "Ok, lets see what I can find.";
 
 $(document).ready(function() {
   $speechInput = $("#speech");
@@ -18,6 +20,7 @@ $(document).ready(function() {
     }
   });
   $recBtn.on("click", function(event) {
+    $speechInput.val('');
     switchRecognition();
   });
 });
@@ -48,6 +51,7 @@ function startRecognition() {
 }
 
 function stopRecognition() {
+  respond(messageRecordingEnd);
   if (recognition) {
     recognition.stop();
     recognition = null;
@@ -95,26 +99,24 @@ function send() {
 function prepareResponse(val) {
   if (val.result.action === "navigate.to.music") {
     window.location = "https://dose.com/tagged/music";
+    respond(messageSuccess);
   }
 
-  if (val.result.action === "navigate.to.food") {
+  else if (val.result.action === "navigate.to.food") {
     window.location = "https://dose.com/tagged/food";
+    respond(messageSuccess);
   }
 
-  // let debugJSON = JSON.stringify(val, undefined, 2),
-  //   spokenResponse = val.result.speech;
-  // respond(spokenResponse);
-  // debugRespond(debugJSON);
-}
-
-function debugRespond(val) {
-  $("#response").text(val);
+  else if (val){
+    respond(messageSorry);
+  }
 }
 
 function respond(val) {
-  if (val == "") {
-    val = messageSorry;
+  if (val === messageRecording || val === messageRecordingEnd) {
+    $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
   }
+
   if (val !== messageRecording) {
     let msg = new SpeechSynthesisUtterance();
     msg.voiceURI = "native";
@@ -122,5 +124,4 @@ function respond(val) {
     msg.lang = "en-US";
     window.speechSynthesis.speak(msg);
   }
-  $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
 }
