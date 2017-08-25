@@ -10,7 +10,7 @@
     "start": "nodemon --watch server/ server/bin/www"
   },
   "engines": {
-    "node": "8.2.1"
+    "node": "8.4.0"
   },
   "dependencies": {
     "axios": "^0.16.2",
