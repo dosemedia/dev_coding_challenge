@@ -1,129 +1,37 @@
-# DOSE Developer Coding Challenge
+# DOSE Digital Assistant
+Created by: Daniel Pencak
 
-This is your opportunity to show us what you are capabale of!  We are looking for developers who :
-- Write clean, well structured code
-- Have attention to detail
-- Can solve difficult problems
-- Are creative
+## Build and Run
 
-## Introducing DOSE Digital Assistant
+After you fork and clone this repository make sure you run `npm install` to install all the dependencies.
 
-For this coding challenge you're going to take on Siri, Alexa, and Google!
+## Project Description
 
-Create a single page web application that takes a voice command such as "DOSE, show me music" or "DOSE, show me food".  The application will then redirect the user to the appropriate tag page on dose.com : [music](https://dose.com/tagged/music), [food](https://dose.com/tagged/food)
+A single page application that uses API.ai as well as the HTML5 Speech Recognition API to allow the user to redirect to other pages by voice command.
 
-It turns out you won't exactly be taking on Google for this challange as you'll be using one of their products for the voice recognition part of it.  [API.AI](https://api.ai/) is a free service that provides voice recognition capabilities via an API.  You'll need to create a free account there and then get started with the appropriate [SDK](https://docs.api.ai/docs/sdks).
+The application also uses the Web Speech API to respond back to the user with updates on their request.
 
-## Submitting Your Solution
+## What was the biggest challenge to overcome?
 
-To submit your code challenge:
-- Store your solution at your favorite git host (like github or bitbucket).
-- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository.
+The biggest challenge was communicating with API.ai. I spent four to five hours working with APIAI StreamClient and setting up a test environment. I ended up scraping this because of two reasons: time and lack of documentation. The combination of these two things made me change my direction so I would be able to make the deadline. I ended up going the route of the HTML5 Speech Recognition API because the documentation and support was more pronounced.
 
-## Bonus Points
+## Features
 
-Here's how to get bonus ponts:
-- Host the project on something like [GitHub Pages](https://pages.github.com/).
-- Include good documentation on how to build and run your app.
-- Provide tests for your app.
-- Use [Vue.js](https://vuejs.org/) and [Bootstrap](http://getbootstrap.com/) for the UI (that's what we use here).
-- Make your app as compact as possible using something like [Webpack])[https://webpack.github.io/] or [Rollup](https://rollupjs.org/).
+[<img src="/public/assets/videothumbnail.png">](https://vimeo.com/231124664)
 
-## Hints
+Click here to watch a video demo of the app.
 
-There are two ways to do the speech recognition.  
-The first is to use webkitSpeechRecognition which is used in the demo code snippet that the API.AI docs point to.
-This method will only work on Chrome (and maybe Opera) browsers.
-This document may be more useful than the JS/HTML5 example that API.AI provides in converting voice to text : 
-https://developers.google.com/web/updates/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API
+## Tech Stack
 
-The second way is to use the ApiAiStreamClient (recommended). 
-This method doesn't have the best documentation, but these will get you pointed in the right direction.
-https://github.com/api-ai/apiai-javascript-client
-https://github.com/api-ai/apiai-javascript-client/blob/master/ts/Stream/StreamClient.ts
+1. CSS
+2. Node.js
+3. JavaScript
+4. Bootstrap
+5. jQuery
+6. HTML
 
-Along with this code snippet
+## API's
 
-```
-import {ApiAiClient, ApiAiStreamClient} from 'api-ai-javascript';
-const client = new ApiAiClient({accessToken: 'YOUR API.AI CLIENT TOKEN HERE', streamClientClass: ApiAiStreamClient});
-
-...
-
-startStream() {
-        
-    // Method 2 - Use stream client
-    if(this.streamClient) {
-        this.closeStream();
-    }
-
-    this.streamClient = client.createStreamClient({
-        onInit: () => {
-            console.log("onInit");
-            this.streamClient.open();
-        },
-        onOpen: () => {
-            console.log("onOpen");
-            this.streamClient.startListening();
-
-            // It looks like the stream doesn't stop on it's own after a match, so 
-            // help things along by stopping after a set period of time.
-            setTimeout(() => {
-                this.stop();
-            }, 4000);
-        },
-        onClose: () => {
-            console.log("onClose");
-        },
-        onStartListening: () => {
-            console.log("onStartListening");
-            this.error = "";
-            this.speech = "";
-            this.listening = true;
-            this.event_count = 0;
-        },
-        onStopListening: () => {
-            console.log("onStopListening");
-            this.listening = false;
-        },
-        onResults: (arg) => {
-            console.log("onResults", arg);
-            if((arg) && (arg.result) && (arg.result.speech)) {
-                this.result = arg.result.speech;
-            }
-            if((arg) && (arg.result) && (arg.result.resolvedQuery)) {
-                this.speech = arg.result.resolvedQuery;
-            }
-            this.closeStream();
-        },
-        onEvent: (code, message) => {
-            console.log("onEvent : "+code+" - ", message);
-            this.event_count = this.event_count + 1;
-
-            this.blinkMic();
-
-        },
-        onError: (code, message) => {
-            console.log("onEvent : "+code+" - ", message);
-            this.closeStream();
-        },
-    });
-    this.streamClient.init();
-},
-
-stopStream() {
-    if((this.streamClient) && (this.listening)) {
-        this.streamClient.stopListening();
-    }
-},
-
-closeStream() {
-    if(this.streamClient) {
-        if((this.streamClient) && (this.listening)) {
-            this.streamClient.stopListening();
-        }
-        this.streamClient.close();
-        this.streamClient = null;
-    }
-},
-```
+1. HTML5 Speech Recognition API
+2. Web Speech API
+3. API.ai
