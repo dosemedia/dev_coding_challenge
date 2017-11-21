@@ -1,32 +1,103 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+    <button @click="startStream">Record</button>
   </div>
 </template>
 
 <script>
+import { ApiAiClient, ApiAiStreamClient } from 'api-ai-javascript';
+
+const client = new ApiAiClient({
+  accessToken: process.env.API_AI_KEY,
+  streamClientClass: ApiAiStreamClient,
+});
+
+console.log(client);
+
 export default {
   name: 'HelloWorld',
   data() {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      msg: this.result || 'Make A Request',
     };
+  },
+  methods: {
+    startStream() {
+      if (this.streamClient) {
+        this.closeStream();
+      }
+
+      this.streamClient = client.createStreamClient({
+        onInit: () => {
+          this.streamClient.open();
+        },
+
+        onOpen: () => {
+          this.streamClient.startListening();
+
+          setTimeout(() => {
+            this.stop();
+          }, 4000);
+        },
+
+        onClose: () => {
+
+        },
+
+        onStartListening: () => {
+          this.error = '';
+          this.speech = '';
+          this.listening = true;
+          this.event_count = 0;
+        },
+
+        onStopListening: () => {
+          this.listening = false;
+        },
+
+        onResults: (arg) => {
+          if ((arg) && (arg.result) && (arg.result.speech)) {
+            this.result = arg.result.speech;
+          }
+
+          if ((arg) && (arg.result) && (arg.result.resolvedQuery)) {
+            this.speech = arg.result.resolvedQuery;
+          }
+
+          this.closeStream();
+        },
+
+        onEvent: (code, message) => {
+          this.event_count = this.event_count + 1;
+
+          // this.blinkMic();
+          return message;
+        },
+
+        onError: (code, message) => {
+          this.closeStream();
+          return message;
+        },
+      });
+      this.streamClient.init();
+    },
+
+    stopStream() {
+      if ((this.streamClient) && (this.listening)) {
+        this.streamClient.onStopListening();
+      }
+    },
+
+    closeStream() {
+      if (this.streamClient) {
+        if ((this.streamClient) && (this.listening)) {
+          this.streamClient.stopListening();
+        }
+        this.streamClient.close();
+        this.streamClient = null;
+      }
+    },
   },
 };
 </script>
