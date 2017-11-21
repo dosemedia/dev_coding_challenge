@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="hello col-md-6 col-md-offset-3">
     <h1>{{ msg }}</h1>
     <VueButton @click.native="startStream" />
   </div>
@@ -61,6 +61,9 @@ export default {
                     // eslint-disable-next-line
                     window.open(resp.result.fulfillment.messages[1].payload.doseUrl);
                   }).catch((err) => {
+                    this.$nextTick(() => {
+                      this.msg = 'oops, something went wrong. Please Refresh the page and try again.';
+                    });
                     //eslint-disable-next-line
                     console.log(err);
                   });

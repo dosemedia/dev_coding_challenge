@@ -1,6 +1,8 @@
 <template>
-  <div id="app">
-    <HelloWorld/>
+  <div id="app" class="container">
+    <div class="row">
+      <HelloWorld/>
+    </div>
   </div>
 </template>
 
