@@ -1,13 +1,14 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <button @click="startStream">Record</button>
+    <VueButton @click.native="startStream" />
   </div>
 </template>
 
 <script>
 import { ApiAiClient } from 'api-ai-javascript';
-// eslint-disable-next-line
+import VueButton from './VueButton';
+
 const client = new ApiAiClient({
   accessToken: process.env.API_AI_KEY,
 });
@@ -17,18 +18,21 @@ let query = '';
 
 export default {
   name: 'HelloWorld',
+  components: {
+    VueButton,
+  },
   data() {
     return {
-      msg: 'Record Something',
+      msg: 'Ask Dose',
     };
   },
   methods: {
     startStream() {
       if (!('webkitSpeechRecognition' in window)) {
-        // eslint-disable-next-line
         this.$nextTick(() => {
-          this.msg = 'Your Browser Doesn\'t support voice recognition. Please use Google Chrom for best results';
-        })
+          this.msg = `Your Browser Doesn't support voice recognition.
+                      Please use Google Chrome for best results`;
+        });
       } else {
         // eslint-disable-next-line
         recognition = new webkitSpeechRecognition();
