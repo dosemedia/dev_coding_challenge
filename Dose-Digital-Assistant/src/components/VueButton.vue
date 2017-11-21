@@ -1,5 +1,5 @@
 <template>
-  <button>{{buttonText}}</button>
+  <button class="btn btn-primary">{{buttonText}}</button>
 </template>
 
 <script>
@@ -7,14 +7,11 @@
     name: 'VueButton',
     data() {
       return {
-        buttonText: 'Click Me',
+        buttonText: 'Click Me To Start',
       };
     },
   };
 </script>
 
-<style scoped>
-
-</style>
 
 
