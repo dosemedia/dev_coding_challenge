@@ -1,6 +1,8 @@
 # dose-digital-assistant
 
-> An assistant for Dose
+> An assistant for Dose using voice recognition!
+
+The commands below allow you to build the app locally. You must use Chrome in order for the voice recognition to work.
 
 ## Build Setup
 
