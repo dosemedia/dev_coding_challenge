@@ -6,97 +6,69 @@
 </template>
 
 <script>
-import { ApiAiClient, ApiAiStreamClient } from 'api-ai-javascript';
-
+import { ApiAiClient } from 'api-ai-javascript';
+// eslint-disable-next-line
 const client = new ApiAiClient({
   accessToken: process.env.API_AI_KEY,
-  streamClientClass: ApiAiStreamClient,
 });
 
-console.log(client);
+let recognition;
+let query = '';
 
 export default {
   name: 'HelloWorld',
   data() {
     return {
-      msg: this.result || 'Make A Request',
+      msg: 'Record Something',
     };
   },
   methods: {
     startStream() {
-      if (this.streamClient) {
-        this.closeStream();
-      }
+      if (!('webkitSpeechRecognition' in window)) {
+        // eslint-disable-next-line
+        this.$nextTick(() => {
+          this.msg = 'Your Browser Doesn\'t support voice recognition. Please use Google Chrom for best results';
+        })
+      } else {
+        // eslint-disable-next-line
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = false;
 
-      this.streamClient = client.createStreamClient({
-        onInit: () => {
-          this.streamClient.open();
-        },
-
-        onOpen: () => {
-          this.streamClient.startListening();
-
-          setTimeout(() => {
-            this.stop();
-          }, 4000);
-        },
-
-        onClose: () => {
-
-        },
-
-        onStartListening: () => {
-          this.error = '';
-          this.speech = '';
-          this.listening = true;
-          this.event_count = 0;
-        },
-
-        onStopListening: () => {
-          this.listening = false;
-        },
-
-        onResults: (arg) => {
-          if ((arg) && (arg.result) && (arg.result.speech)) {
-            this.result = arg.result.speech;
+        recognition.onstart = () => {
+          query = '';
+        };
+        recognition.onresult = (event) => {
+          this.msg = '';
+          for (let i = event.resultIndex; i < event.results.length; i += 1) {
+            query += event.results[i][0].transcript;
           }
-
-          if ((arg) && (arg.result) && (arg.result.resolvedQuery)) {
-            this.speech = arg.result.resolvedQuery;
-          }
-
-          this.closeStream();
-        },
-
-        onEvent: (code, message) => {
-          this.event_count = this.event_count + 1;
-
-          // this.blinkMic();
-          return message;
-        },
-
-        onError: (code, message) => {
-          this.closeStream();
-          return message;
-        },
-      });
-      this.streamClient.init();
-    },
-
-    stopStream() {
-      if ((this.streamClient) && (this.listening)) {
-        this.streamClient.onStopListening();
+        };
+        recognition.onerror = (event) => {
+          // eslint-disable-next-line
+          console.log(event);
+        };
+        recognition.onend = () => {
+          client.textRequest(query)
+                  .then((resp) => {
+                    this.$nextTick(() => {
+                      this.msg = resp.result.fulfillment.speech;
+                    });
+                    // eslint-disable-next-line
+                    window.open(resp.result.fulfillment.messages[1].payload.doseUrl);
+                  }).catch((err) => {
+                    //eslint-disable-next-line
+                    console.log(err);
+                  });
+        };
+        recognition.lang = 'en-US';
       }
-    },
 
-    closeStream() {
-      if (this.streamClient) {
-        if ((this.streamClient) && (this.listening)) {
-          this.streamClient.stopListening();
-        }
-        this.streamClient.close();
-        this.streamClient = null;
-      }
+      recognition.start();
+
+      setTimeout(() => {
+        recognition.stop();
+      }, 4000);
     },
   },
 };
