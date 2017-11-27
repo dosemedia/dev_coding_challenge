@@ -6,124 +6,49 @@ This is your opportunity to show us what you are capabale of!  We are looking fo
 - Can solve difficult problems
 - Are creative
 
-## Introducing DOSE Digital Assistant
+## The DOSE News Poll
 
-For this coding challenge you're going to take on Siri, Alexa, and Google!
+For this coding challenge you're going to create a live news brodcast opinion poll widget.
 
-Create a single page web application that takes a voice command such as "DOSE, show me music" or "DOSE, show me food".  The application will then redirect the user to the appropriate tag page on dose.com : [music](https://dose.com/tagged/music), [food](https://dose.com/tagged/food)
+### Step 1 - Create Firebase App
 
-It turns out you won't exactly be taking on Google for this challange as you'll be using one of their products for the voice recognition part of it.  [API.AI](https://api.ai/) is a free service that provides voice recognition capabilities via an API.  You'll need to create a free account there and then get started with the appropriate [SDK](https://docs.api.ai/docs/sdks).
+Your web application should be implemented on Google's [Firebase](https://firebase.google.com/) platform.  Begin by setting up a **free** firebase account and starting an app project.
+
+### Step 2 - Implement Authentication
+
+In your web application, implement a simple login workflow that allows poll authors to [create an account and login/logout](https://firebase.google.com/docs/auth/web/manage-users).  You do not need to include the ability to reset passwords, change passwords, or delete accounts.
+
+### Step 3 - Implement Admin UI
+
+Create a user interface that allows authenticated users to create News Polls.  A poll consists of a question and one or more answers.  An example could be the question "Are puppies or kittens cuter?" along with answers "Kittens", and "Puppies".  Users should be able to see a list of all the questions they have ever created.  Users should be able to update/delete any of their questions/answers.  You may choose either [Realtime Database](https://firebase.google.com/docs/database/) or [Cloud Firestore](https://firebase.google.com/docs/firestore/) to store the data.  For the sake of time, you do not need to ensure that the application is secure (users can edit each other's questions if they know the id).
+
+### Step 4 - Implement Voting Widget
+
+Create a voting widget that allows participants to vote on a given question.  For example, if I embed the following on my news channel's website...
+
+```
+<iframe src="https://your-app.firebaseapp.com/#/poll/pollidhere" style="width: 400px; height: 200px;"></iframe>
+```
+
+...participants will see the poll and be able to choose their answer.
+
+### Step 5 - Provide Realtime Results
+
+After a participant votes on a poll, they should see the current poll results.  These results should update in realtime as additional responses are submitted.
+
+### Step 6 - Deploy
+
+Once your app is complete, deploy it on [Firebase Hosting](https://firebase.google.com/docs/hosting/deploying).
 
 ## Submitting Your Solution
 
 To submit your code challenge:
 - Store your solution at your favorite git host (like github or bitbucket).
-- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository.
+- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository as well as the Firebase Hosting url for your solution.
 
 ## Bonus Points
 
 Here's how to get bonus ponts:
-- Host the project on something like [GitHub Pages](https://pages.github.com/).
-- Include good documentation on how to build and run your app.
+- Include good documentation on how to build and run your app locally.
 - Provide tests for your app.
-- Use [Vue.js](https://vuejs.org/) and [Bootstrap](http://getbootstrap.com/) for the UI (that's what we use here).
-- Make your app as compact as possible using something like [Webpack])[https://webpack.github.io/] or [Rollup](https://rollupjs.org/).
-
-## Hints
-
-There are two ways to do the speech recognition.  
-The first is to use webkitSpeechRecognition which is used in the demo code snippet that the API.AI docs point to.
-This method will only work on Chrome (and maybe Opera) browsers.
-This document may be more useful than the JS/HTML5 example that API.AI provides in converting voice to text : 
-https://developers.google.com/web/updates/2013/01/Voice-Driven-Web-Apps-Introduction-to-the-Web-Speech-API
-
-The second way is to use the ApiAiStreamClient (recommended). 
-This method doesn't have the best documentation, but these will get you pointed in the right direction.
-https://github.com/api-ai/apiai-javascript-client
-https://github.com/api-ai/apiai-javascript-client/blob/master/ts/Stream/StreamClient.ts
-
-Along with this code snippet
-
-```
-import {ApiAiClient, ApiAiStreamClient} from 'api-ai-javascript';
-const client = new ApiAiClient({accessToken: 'YOUR API.AI CLIENT TOKEN HERE', streamClientClass: ApiAiStreamClient});
-
-...
-
-startStream() {
-        
-    // Method 2 - Use stream client
-    if(this.streamClient) {
-        this.closeStream();
-    }
-
-    this.streamClient = client.createStreamClient({
-        onInit: () => {
-            console.log("onInit");
-            this.streamClient.open();
-        },
-        onOpen: () => {
-            console.log("onOpen");
-            this.streamClient.startListening();
-
-            // It looks like the stream doesn't stop on it's own after a match, so 
-            // help things along by stopping after a set period of time.
-            setTimeout(() => {
-                this.stop();
-            }, 4000);
-        },
-        onClose: () => {
-            console.log("onClose");
-        },
-        onStartListening: () => {
-            console.log("onStartListening");
-            this.error = "";
-            this.speech = "";
-            this.listening = true;
-            this.event_count = 0;
-        },
-        onStopListening: () => {
-            console.log("onStopListening");
-            this.listening = false;
-        },
-        onResults: (arg) => {
-            console.log("onResults", arg);
-            if((arg) && (arg.result) && (arg.result.speech)) {
-                this.result = arg.result.speech;
-            }
-            if((arg) && (arg.result) && (arg.result.resolvedQuery)) {
-                this.speech = arg.result.resolvedQuery;
-            }
-            this.closeStream();
-        },
-        onEvent: (code, message) => {
-            console.log("onEvent : "+code+" - ", message);
-            this.event_count = this.event_count + 1;
-
-            this.blinkMic();
-
-        },
-        onError: (code, message) => {
-            console.log("onEvent : "+code+" - ", message);
-            this.closeStream();
-        },
-    });
-    this.streamClient.init();
-},
-
-stopStream() {
-    if((this.streamClient) && (this.listening)) {
-        this.streamClient.stopListening();
-    }
-},
-
-closeStream() {
-    if(this.streamClient) {
-        if((this.streamClient) && (this.listening)) {
-            this.streamClient.stopListening();
-        }
-        this.streamClient.close();
-        this.streamClient = null;
-    }
-},
-```
+- Use [Vue.js](https://vuejs.org/) and [Bulma](https://bulma.io/) for the UI (those are what we use at Dose).
