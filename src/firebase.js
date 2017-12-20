@@ -5,12 +5,12 @@ import VueFire from 'vuefire'
 Vue.use(VueFire)
 
 var config = {
-  apiKey: 'AIzaSyBYdUTOUMgtAI4HpbQQ5s5upGB-f85Xiz4',
-  authDomain: 'dose-news-poll.firebaseapp.com',
-  databaseURL: 'https://dose-news-poll.firebaseio.com',
-  projectId: 'dose-news-poll',
-  storageBucket: 'dose-news-poll.appspot.com',
-  messagingSenderId: '1028886806802'
+  apiKey: '',
+  authDomain: '',
+  databaseURL: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: ''
 }
 
 let app = firebase.initializeApp(config)
