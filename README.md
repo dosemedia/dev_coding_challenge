@@ -2,7 +2,23 @@
 
 A live news broadcast opinion poll widget
 
+## Firebase
+Create account at [Google Firebase](https://firebase.google.com/)
+
+Create a project
+
+Under Authentication > Sign-In Method, enable Email/Password
+
+Under Database > Data, add an object called "Polls"
+
+Under Database > Rules, change `".read"` to `true` and `".write"` to `true`
+
+In the upper left corner, click "Web Setup" and copy everything within `var config` and paste this into `var config` in `/src/firebase.js`
+
+
 ## Build Setup
+
+The following requires npm and Node.js
 
 ``` bash
 # install dependencies
