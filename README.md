@@ -18,7 +18,7 @@ In the upper left corner, click "Web Setup" and copy everything within `var conf
 
 ## Build Setup
 
-The following requires npm and Node.js
+The following requires npm and Node.js. If you do not have those, find a guide for your OS.
 
 ``` bash
 # install dependencies
