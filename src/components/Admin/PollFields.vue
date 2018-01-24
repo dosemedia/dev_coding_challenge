@@ -17,18 +17,20 @@
 
     <div>
       <ul>
-        <li v-for="(option, index) in poll.options">
-          <div class="field has-addons">
-            <div class="control">
-              <input type="text" v-model="option.text" class="input">
+        <draggable v-model="poll.options" @start="drag=true" @end="drag=false">
+          <li v-for="(option, index) in poll.options">
+            <div class="field has-addons">
+              <div class="control">
+                <input type="text" v-model="option.text" :key="index" class="input">
+              </div>
+              <div class="control">
+                <a class="button is-danger" @click="deleteOption(index)">
+                  <i class="fa fa-trash"></i>
+                </a>
+              </div>
             </div>
-            <div class="control">
-              <a class="button is-danger" @click="deleteOption(index)">
-                <i class="fa fa-trash"></i>
-              </a>
-            </div>
-          </div>
-        </li>
+          </li>
+        </draggable>
       </ul>
     </div>
 
@@ -49,9 +51,13 @@
 </template>
 
 <script>
+  import draggable from 'vuedraggable'
   
   export default {
     name: 'PollFields',
+    components: {
+      draggable
+    },
     props: {
       poll: {
         type: Object,
@@ -80,6 +86,11 @@
         this.$router.push({
           name: 'Admin'
         })
+      }
+    },
+    watch: {
+      'poll.options': function () {
+        this.save()
       }
     }
   }
