@@ -4,7 +4,7 @@ This is a live opinion poll widget built with Vue.js with a Firebase backend. It
 
 ## Features
 - Re-orderable list of options
--- Live update of re-order
+  - Live update of re-order
 - iframe embeddable
 - Live update of poll results
 
