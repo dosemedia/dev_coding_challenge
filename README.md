@@ -1,8 +1,17 @@
 # dose-news-poll
 
-A live news broadcast opinion poll widget
+This is a live opinion poll widget built with Vue.js with a Firebase backend. It is designed to be embedded within sites as an iframe. 
 
-## Firebase
+## Features
+- Re-orderable list of options
+-- Live update of re-order
+- iframe embeddable
+- Live update of poll results
+
+## Installation
+Install both the backend and frontend, respectively:
+
+### Firebase
 Create account at [Google Firebase](https://firebase.google.com/)
 
 Create a project
@@ -16,7 +25,7 @@ Under Database > Rules, change `".read"` to `true` and `".write"` to `true`
 In the upper left corner, click "Web Setup" and copy everything within `var config` and paste this into `var config` in `/src/firebase.js`
 
 
-## Build Setup
+### Build Setup
 
 The following requires npm and Node.js. If you do not have those, find a guide for your OS.
 
