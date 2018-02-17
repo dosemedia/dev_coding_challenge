@@ -1,54 +1,86 @@
-# DOSE Developer Coding Challenge
+# DOSE Poll
 
-This is your opportunity to show us what you are capabale of!  We are looking for developers who :
-- Write clean, well structured code
-- Have attention to detail
-- Can solve difficult problems
-- Are creative
+> Polling app developed for DOSE full-stack developer challenge
 
-## The DOSE News Poll
+![](https://i.imgur.com/jCYVfBh.png)
 
-For this coding challenge you're going to create a live news brodcast opinion poll widget.
+## Getting Started
 
-### Step 1 - Create Firebase App
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Your web application should be implemented on Google's [Firebase](https://firebase.google.com/) platform.  Begin by setting up a **free** firebase account and starting an app project.
+### Prerequisites
 
-### Step 2 - Implement Authentication
+You will need to locally install a recent version (^8.x.x) of [Node.js](https://nodejs.org/en/). If you wish to deploy to Firebase, you should set up a Firebase account. If you haven't installed the Firebase CLI tools, open a terminal and run
 
-In your web application, implement a simple login workflow that allows poll authors to [create an account and login/logout](https://firebase.google.com/docs/auth/web/manage-users).  You do not need to include the ability to reset passwords, change passwords, or delete accounts.
-
-### Step 3 - Implement Admin UI
-
-Create a user interface that allows authenticated users to create News Polls.  A poll consists of a question and one or more answers.  An example could be the question "Are puppies or kittens cuter?" along with answers "Kittens", and "Puppies".  Users should be able to see a list of all the questions they have ever created.  Users should be able to update/delete any of their questions/answers.  You may choose either [Realtime Database](https://firebase.google.com/docs/database/) or [Cloud Firestore](https://firebase.google.com/docs/firestore/) to store the data.  For the sake of time, you do not need to ensure that the application is secure (users can edit each other's questions if they know the id).
-
-### Step 4 - Implement Voting Widget
-
-Create a voting widget that allows participants to vote on a given question.  For example, if I embed the following on my news channel's website...
-
-```
-<iframe src="https://your-app.firebaseapp.com/#/poll/pollidhere" style="width: 400px; height: 200px;"></iframe>
+```bash
+npm i -g firebase-tools
 ```
 
-...participants will see the poll and be able to choose their answer.
+### Installing
 
-### Step 5 - Provide Realtime Results
+In your desired directory, run:
 
-After a participant votes on a poll, they should see the current poll results.  These results should update in realtime as additional responses are submitted.
+```bash
+git clone git@github.com:jameslave/dev_coding_challenge.git
+cd dev_coding_challenge && npm i
+npm start
+```
 
-### Step 6 - Deploy
+The page should be visible at `http://localhost:8080`, with changes to code appearing live. Go ahead
+and create an account, then create some polls!
 
-Once your app is complete, deploy it on [Firebase Hosting](https://firebase.google.com/docs/hosting/deploying).
+## Deployment
 
-## Submitting Your Solution
+Open the [Firebase console](https://console.firebase.google.com/u/0/) and create a new project. In the **Database** section, click **Try Firestore Beta**. Click **Enable**. Ensure the following is at the bottom of your HTML body:
 
-To submit your code challenge:
-- Store your solution at your favorite git host (like github or bitbucket).
-- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository as well as the Firebase Hosting url for your solution.
+```html
+<script src="https://www.gstatic.com/firebasejs/4.10.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-firestore.js"></script>
+<script>
+  // Initialize Firebase
+  // TODO: Replace with your project's customized code snippet
+  var config = {
+    apiKey: "<API_KEY>",
+    authDomain: "<PROJECT_ID>.firebaseapp.com",
+    databaseURL: "https://<DATABASE_NAME>.firebaseio.com",
+    projectId: "<PROJECT_ID>",
+  };
+  firebase.initializeApp(config);
+  const db = firebase.firestore();
+</script>
+```
 
-## Bonus Points
+You will also need to change `.firebaserc` to include:
 
-Here's how to get bonus ponts:
-- Include good documentation on how to build and run your app locally.
-- Provide tests for your app.
-- Use [Vue.js](https://vuejs.org/) and [Bulma](https://bulma.io/) for the UI (those are what we use at Dose).
+```json
+{
+  "projects": {
+    "default": "<PROJECT_ID>"
+  }
+}
+
+```
+
+`firebase.json` is already configured to serve the `/dist` directory and to handle `vue-router`'s history mode, so if all has gone well, you only need to run:
+
+```bash
+npm run build && firebase deploy
+```
+
+Your deployed app should be available at `https://<PROJECT_ID>.firebaseapp.com/auth`.
+
+## Built With
+
+* [Vue.js](https://vuejs.org/) - The progressive JavaScript framework
+* [Bulma](https://bulma.io/) - Free and open source CSS framework based on Flexbox
+* [Firebase](https://firebase.google.com/) - Google's mobile and web application development platform
+
+## Authors
+
+* **[James Lave](https://jameslave.com)** - Implementation
+* **Aaron Blondeau** - Project requirements and inital commits
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
