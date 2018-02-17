@@ -39,10 +39,10 @@
     </div>
 
     <div class="box">
-      <h4 v-if="!canEdit"
-          class="title is-1">
+      <h3 v-if="!canEdit"
+          class="title is-3">
         {{ poll.title }}
-      </h4>
+      </h3>
 
       <div v-if="canEdit"
            class="field">
@@ -60,11 +60,18 @@
           {{ option.title }}
         </h4>
         <div v-if="canEdit"
-             class="field">
+             class="field has-addons">
+          <div class="control"
+               @click="onDeleteOption(i)">
+            <a class="button is-shadowless">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
           <div class="control">
             <input class="input"
                    type="text"
-                   v-model="editedPoll.options[i].title">
+                   v-model="editedPoll.options[i].title"
+                   style="padding-left: 1rem">
           </div>
         </div>
       </div>
@@ -112,6 +119,12 @@ export default {
       this.$emit('polledited', this.editedPoll);
     },
 
+    onDeleteOption(i) {
+      const optionsCopy = [...this.editedPoll.options];
+      optionsCopy.splice(i, 1);
+      this.editedPoll.options = optionsCopy;
+    },
+
     onAddOption() {
       this.editedPoll.options = [...this.editedPoll.options, { title: '' }];
     },
@@ -120,7 +133,7 @@ export default {
 </script>
 
 <style scoped>
-input {
+.has-addons > .control {
   margin: 0.5rem 0;
 }
 
