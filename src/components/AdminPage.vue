@@ -1,9 +1,11 @@
 <template>
   <div>
+    <v-navbar></v-navbar>
     <div class="columns is-gapless">
       <div class="column is-one-third">
         <v-poll-list :polls="polls"
-                     @pollselected="onPollSelected"></v-poll-list>
+                     @pollselected="onPollSelected"
+                     @newpollclicked="onNewPollClicked"></v-poll-list>
       </div>
       <div class="column is-two-thirds">
         <v-poll-display :poll="selectedPoll"
@@ -15,11 +17,13 @@
 </template>
 
 <script>
+import vNavbar from './Navbar';
 import vPollList from './PollList';
 import vPollDisplay from './PollDisplay';
 
 export default {
   components: {
+    vNavbar,
     vPollList,
     vPollDisplay,
   },
@@ -32,15 +36,6 @@ export default {
   },
 
   methods: {
-    onLogout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.replace('/auth');
-        });
-    },
-
     refreshPolls() {
       const selectedId = this.selectedPoll ? this.selectedPoll.id : null;
       db.collection('polls')
@@ -57,6 +52,10 @@ export default {
         });
     },
 
+    onNewPollClicked() {
+
+    },
+
     onPollSelected(poll) {
       this.selectedPoll = poll;
     },
@@ -66,6 +65,10 @@ export default {
         .doc(updatedPoll.id)
         .set(updatedPoll, { merge: true })
         .then(() => this.refreshPolls());
+    },
+
+    onPollDeleted() {
+
     },
   },
 
