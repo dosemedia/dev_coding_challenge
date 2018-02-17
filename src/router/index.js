@@ -34,5 +34,9 @@ export default new Router({
         return next();
       },
     },
+    {
+      path: '/',
+      redirect: '/admin',
+    },
   ],
 });
