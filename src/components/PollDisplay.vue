@@ -67,6 +67,7 @@
           <h4 v-if="!canEdit"
               class="title is-4">
             {{ option.title }}
+            <span class="tag is-large is-rounded">{{ '+' + option.votes }}</span>
           </h4>
           <div v-if="canEdit"
                class="field has-addons">
