@@ -142,7 +142,6 @@ export default {
     },
 
     onLogin() {
-      console.log('clicked');
       firebase
         .auth()
         .signInWithEmailAndPassword(this.user.email, this.user.password)
