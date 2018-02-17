@@ -1,5 +1,8 @@
 <template>
   <nav class="panel">
+    <div class="panel-heading">
+      Active Polls
+    </div>
     <a :key="index"
        v-for="(poll, index) in polls"
        @click="onSelectPoll(poll)"
