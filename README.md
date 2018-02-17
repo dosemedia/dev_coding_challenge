@@ -67,7 +67,7 @@ You will also need to change `.firebaserc` to include:
 npm run build && firebase deploy
 ```
 
-Your deployed app should be available at `https://<PROJECT_ID>.firebaseapp.com/auth`.
+Your deployed app should be available at `https://<PROJECT_ID>.firebaseapp.com`.
 
 ## Built With
 
