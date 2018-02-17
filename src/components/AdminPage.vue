@@ -8,7 +8,9 @@
                      @newpollclicked="onNewPollClicked"></v-poll-list>
       </div>
       <div class="column is-two-thirds">
-        <v-poll-display :poll="selectedPoll"
+        <v-poll-display :is-new="isNew"
+                        :poll="selectedPoll"
+                        @newpollcanceled="onNewPollCanceled"
                         @polledited="onPollEdited"
                         @polldeleted="onPollDeleted"></v-poll-display>
       </div>
@@ -32,6 +34,7 @@ export default {
     return {
       polls: [],
       selectedPoll: null,
+      isNew: false,
     };
   },
 
@@ -53,18 +56,32 @@ export default {
     },
 
     onNewPollClicked() {
+      this.selectedPoll = null;
+      this.isNew = true;
+    },
 
+    onNewPollCanceled() {
+      this.isNew = false;
     },
 
     onPollSelected(poll) {
+      this.isNew = false;
       this.selectedPoll = poll;
     },
 
     onPollEdited(updatedPoll) {
-      db.collection('polls')
-        .doc(updatedPoll.id)
-        .set(updatedPoll, { merge: true })
-        .then(() => this.refreshPolls());
+      // if poll previously existed (i.e., has an id)
+      if (updatedPoll.id) {
+        db.collection('polls')
+          .doc(updatedPoll.id)
+          .set(updatedPoll, { merge: true })
+          .then(() => this.refreshPolls());
+      } else {
+        const newPollRef = db.collection('polls').doc();
+        const newId = newPollRef.id;
+        newPollRef.set({ ...updatedPoll, id: newId })
+          .then(() => this.refreshPolls());
+      }
     },
 
     onPollDeleted() {

@@ -1,15 +1,16 @@
 <template>
-  <div v-if="poll"
+  <div v-if="poll || isNew"
        class="poll-display">
     <div class="field is-grouped">
-      <p class="control">
+      <p v-if="!isNew"
+         class="control">
         <a class="button is-danger is-outlined">
           <i class="fas fa-trash"
              style="margin-right: 0.5rem;"></i>
           Delete poll
         </a>
       </p>
-      <p v-show="!canEdit"
+      <p v-show="!canEdit && !isNew"
          class="control">
         <a class="button"
            @click="onClickEdit">
@@ -21,16 +22,16 @@
       <p v-show="canEdit"
          class="control">
         <a class="button is-success is-outlined"
-           @click="onSaveEdit">
+           @click="onSave">
           <i class="fas fa-save"
              style="margin-right: 0.5rem;"></i>
-          Save changes
+          Save
         </a>
       </p>
       <p v-show="canEdit"
          class="control">
         <a class="button is-outlined"
-           @click="onCancelEdit">
+           @click="onCancel">
           <i class="fas fa-ban"
              style="margin-right: 0.5rem;"></i>
           Cancel
@@ -49,11 +50,13 @@
         <div class="control">
           <input class="input is-large"
                  type="text"
+                 placeholder="Poll question"
                  v-model="editedPoll.title">
         </div>
       </div>
 
-      <div :key="i"
+      <div v-if="editedPoll.options.length"
+           :key="i"
            v-for="(option, i) in editedPoll.options">
         <h4 v-if="!canEdit"
             class="title is-4">
@@ -70,6 +73,7 @@
           <div class="control">
             <input class="input"
                    type="text"
+                   :placeholder="'Option ' + (i + 1)"
                    v-model="editedPoll.options[i].title"
                    style="padding-left: 1rem">
           </div>
@@ -89,18 +93,40 @@
 
 <script>
 export default {
-  props: ['poll'],
+  props: ['poll', 'isNew'],
 
   data() {
     return {
-      editedPoll: null,
+      editedPoll: {
+        title: '',
+        options: [],
+        user: firebase.auth().currentUser.uid,
+      },
       canEdit: false,
     };
   },
 
+  computed: {
+    userId() {
+      return firebase.auth().currentUser.uid;
+    },
+  },
+
   watch: {
+    isNew(newValue) {
+      this.canEdit = newValue;
+    },
+
     poll(updatedValue) {
-      this.editedPoll = { ...updatedValue };
+      if (updatedValue) {
+        this.editedPoll = { ...updatedValue };
+      } else {
+        this.editedPoll = {
+          title: '',
+          options: [],
+          user: firebase.auth().currentUser.uid,
+        };
+      }
     },
   },
 
@@ -109,14 +135,20 @@ export default {
       this.canEdit = true;
     },
 
-    onCancelEdit() {
-      this.canEdit = false;
-      this.editedPoll = { ...this.poll };
+    onCancel() {
+      if (this.isNew) {
+        // if adding new poll, send cancel event
+        this.$emit('newpollcanceled');
+      } else {
+        this.canEdit = false;
+        this.editedPoll = { ...this.poll };
+      }
     },
 
-    onSaveEdit() {
+    onSave() {
       this.canEdit = false;
       this.$emit('polledited', this.editedPoll);
+      this.onCancel();
     },
 
     onDeleteOption(i) {
@@ -126,7 +158,7 @@ export default {
     },
 
     onAddOption() {
-      this.editedPoll.options = [...this.editedPoll.options, { title: '' }];
+      this.editedPoll.options = [...this.editedPoll.options, { title: '', votes: 0.0 }];
     },
   },
 };

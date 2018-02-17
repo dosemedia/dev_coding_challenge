@@ -10,7 +10,8 @@
       {{ poll.title }}
     </a>
     <div class="panel-block">
-      <a class="button is-primary is-outlined is-fullwidth">
+      <a class="button is-primary is-outlined is-fullwidth"
+         @click="$emit('newpollclicked')">
         <i class="fa fa-plus"
            style="margin-right: 0.5rem;"></i>
         Create new poll
