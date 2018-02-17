@@ -1,5 +1,5 @@
 <template>
-  <section class="hero is-light is-fullheight">
+  <section class="hero is-primary is-fullheight">
     <div class="hero-body">
       <div class="container">
         <div class="column is-4 is-offset-4">
@@ -19,7 +19,10 @@
 
             <form v-if="isActive === 'login'">
               <div class="field">
-                <div class="control">
+                <div class="control has-icons-left">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                  </span>
                   <input class="input"
                          type="email"
                          placeholder="Your email"
@@ -28,7 +31,10 @@
               </div>
 
               <div class="field">
-                <div class="control">
+                <div class="control has-icons-left">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
                   <input class="input"
                          type="password"
                          placeholder="Your password"
@@ -43,7 +49,10 @@
 
             <form v-if="isActive === 'signup'">
               <div class="field">
-                <div class="control">
+                <div class="control has-icons-left">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-envelope"></i>
+                  </span>
                   <input class="input"
                          type="email"
                          placeholder="Email"
@@ -51,7 +60,10 @@
                 </div>
               </div>
               <div class="field">
-                <div class="control">
+                <div class="control has-icons-left">
+                  <span class="icon is-small is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
                   <input class="input"
                          type="password"
                          placeholder="Password"
@@ -59,7 +71,12 @@
                 </div>
               </div>
               <div class="field">
-                <div class="control">
+                <div class="control"
+                     :class="{'has-icons-left': passwordsMatch}">
+                  <span v-if="passwordsMatch"
+                        class="icon is-small is-left has-text-success">
+                    <i class="fas fa-check"></i>
+                  </span>
                   <input class="input"
                          :class="{'is-success': passwordsMatch}"
                          type="password"
@@ -137,3 +154,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+button {
+  margin-top: 2rem;
+}
+</style>
+
