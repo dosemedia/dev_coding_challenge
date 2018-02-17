@@ -75,14 +75,10 @@ export default {
   beforeCreate() {
     const routeId = this.$route.params.id;
     db.collection('polls')
-      .where('id', '==', routeId)
-      .onSnapshot((querySnapshot) => {
-        if (querySnapshot.docs && querySnapshot.docs.length) {
-          [this.poll] = querySnapshot.docs;
-          this.plotResults();
-        } else {
-          this.errored = true;
-        }
+      .doc(routeId)
+      .onSnapshot((docSnapshot) => {
+        this.poll = docSnapshot;
+        this.plotResults();
       });
   },
 };
