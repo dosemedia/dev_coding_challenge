@@ -66,8 +66,8 @@
              v-for="(option, i) in Object.values(inputData.options)">
           <h4 v-if="!canEdit"
               class="title is-4">
-            {{ option.title }}
-            <span class="tag is-large is-rounded">{{ '+' + option.votes }}</span>
+            <span class="tag is-info is-large is-rounded">{{ '+' + option.votes }}</span>
+            &nbsp;{{ option.title }}
           </h4>
           <div v-if="canEdit"
                class="field has-addons">
@@ -101,16 +101,16 @@
     <div class="card">
       <header class="card-header">
         <p class="card-header-title">
-          Embed Link
+          Embed
         </p>
       </header>
       <div class="card-content">
-        <div class="field is-grouped">
+        <div class="field is-horizontal is-grouped">
           <div class="control is-expanded">
             <input id="embed-link"
                    class="input"
                    type="text"
-                   :value="'https://dose-poll.firebaseapp.com/poll/' + pollSnapshot.id"
+                   :value="generateEmbedCode()"
                    readonly>
           </div>
           <div class="control">
@@ -162,6 +162,10 @@ export default {
     copyToClipboard() {
       document.querySelector('#embed-link').select();
       document.execCommand('copy');
+    },
+
+    generateEmbedCode() {
+      return `<iframe src="https://dose-poll.firebaseapp.com/poll/${this.pollSnapshot.id}" style="width: 400px; height: 200px;"></iframe>`;
     },
 
     onClickDelete() {

@@ -7,8 +7,8 @@
        v-for="(poll, index) in polls"
        @click="onSelectPoll(poll)"
        class="panel-block is-active">
-      <span class="tag is-rounded">{{ '+' + sumVotes(poll) }}</span>
-      &nbsp;{{ poll.data().title }}
+      <span class="tag is-info is-rounded">{{ '+' + sumVotes(poll) }}</span>
+      &nbsp;&nbsp;{{ poll.data().title }}
     </a>
     <div class="panel-block">
       <a class="button is-primary is-outlined is-fullwidth"
