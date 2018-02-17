@@ -4,7 +4,8 @@
     <div class="field is-grouped">
       <p v-if="!isNew"
          class="control">
-        <a class="button is-danger is-outlined">
+        <a class="button is-danger is-outlined"
+           @click="onClickDelete">
           <i class="fas fa-trash"
              style="margin-right: 0.5rem;"></i>
           Delete poll
@@ -131,6 +132,10 @@ export default {
   },
 
   methods: {
+    onClickDelete() {
+      this.$emit('deletepollclicked');
+    },
+
     onClickEdit() {
       this.canEdit = true;
     },

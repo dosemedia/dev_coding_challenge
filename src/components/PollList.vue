@@ -28,10 +28,6 @@ export default {
     onSelectPoll(poll) {
       this.$emit('pollselected', poll);
     },
-
-    onCreatePoll() {
-
-    },
   },
 };
 </script>

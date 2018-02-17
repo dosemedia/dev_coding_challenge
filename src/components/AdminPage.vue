@@ -12,7 +12,7 @@
                         :poll="selectedPoll"
                         @newpollcanceled="onNewPollCanceled"
                         @polledited="onPollEdited"
-                        @polldeleted="onPollDeleted"></v-poll-display>
+                        @deletepollclicked="onDeletePollClicked"></v-poll-display>
       </div>
     </div>
   </div>
@@ -84,8 +84,14 @@ export default {
       }
     },
 
-    onPollDeleted() {
-
+    onDeletePollClicked() {
+      db.collection('polls')
+        .doc(this.selectedPoll.id)
+        .delete()
+        .then(() => {
+          this.selectedPoll = null;
+          this.refreshPolls();
+        });
     },
   },
 
