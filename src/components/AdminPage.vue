@@ -1,12 +1,36 @@
 <template>
   <div>
-    <h1>Admin</h1>
-    <button @click="onLogout">Log Out</button>
+    <div class="columns is-gapless">
+      <div class="column is-one-third">
+        <v-poll-list :polls="polls"
+                     @pollselected="onPollSelected"></v-poll-list>
+      </div>
+      <div class="column is-two-thirds">
+        <v-poll-display :poll="selectedPoll"
+                        @polledited="onPollEdited"
+                        @polldeleted="onPollDeleted"></v-poll-display>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import vPollList from './PollList';
+import vPollDisplay from './PollDisplay';
+
 export default {
+  components: {
+    vPollList,
+    vPollDisplay,
+  },
+
+  data() {
+    return {
+      polls: [],
+      selectedPoll: null,
+    };
+  },
+
   methods: {
     onLogout() {
       firebase
@@ -16,7 +40,37 @@ export default {
           this.$router.replace('/auth');
         });
     },
+
+    refreshPolls() {
+      const selectedId = this.selectedPoll ? this.selectedPoll.id : null;
+      db.collection('polls')
+        .where('user', '==', firebase.auth().currentUser.uid)
+        .get()
+        .then((results) => {
+          this.polls = [];
+          results.forEach(doc => this.polls.push({ id: doc.id, ...doc.data() }));
+          if (selectedId) {
+            this.selectedPoll = this.polls.find(poll => poll.id === selectedId);
+          } else {
+            this.selectedPoll = null;
+          }
+        });
+    },
+
+    onPollSelected(poll) {
+      this.selectedPoll = poll;
+    },
+
+    onPollEdited(updatedPoll) {
+      db.collection('polls')
+        .doc(updatedPoll.id)
+        .set(updatedPoll, { merge: true })
+        .then(() => this.refreshPolls());
+    },
+  },
+
+  mounted() {
+    this.refreshPolls();
   },
 };
 </script>
-
