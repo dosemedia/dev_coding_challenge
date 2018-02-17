@@ -7,7 +7,8 @@
        v-for="(poll, index) in polls"
        @click="onSelectPoll(poll)"
        class="panel-block is-active">
-      {{ poll.title }}
+      <span class="tag is-rounded">{{ sumVotes(poll) }}</span>
+      &nbsp;{{ poll.data().title }}
     </a>
     <div class="panel-block">
       <a class="button is-primary is-outlined is-fullwidth"
@@ -25,6 +26,11 @@ export default {
   props: ['polls'],
 
   methods: {
+    sumVotes(pollSnapshot) {
+      const options = Object.values(pollSnapshot.data().options);
+      return options.reduce((a, b) => a + b.votes, 0);
+    },
+
     onSelectPoll(poll) {
       this.$emit('pollselected', poll);
     },

@@ -3,16 +3,19 @@
     <v-navbar></v-navbar>
     <div class="columns is-gapless">
       <div class="column is-one-third">
-        <v-poll-list :polls="polls"
+        <v-poll-list :polls="pollSnapshots"
                      @pollselected="onPollSelected"
                      @newpollclicked="onNewPollClicked"></v-poll-list>
       </div>
       <div class="column is-two-thirds">
-        <v-poll-display :is-new="isNew"
-                        :poll="selectedPoll"
+        <v-poll-display v-if="selectedPollSnapshot && !showNew"
+                        :poll-snapshot="selectedPollSnapshot"
                         @newpollcanceled="onNewPollCanceled"
-                        @polledited="onPollEdited"
-                        @deletepollclicked="onDeletePollClicked"></v-poll-display>
+                        @delete="onDelete">
+        </v-poll-display>
+        <v-new-poll-display v-if="showNew"
+                            @cancel="showNew = false">
+        </v-new-poll-display>
       </div>
     </div>
   </div>
@@ -22,81 +25,53 @@
 import vNavbar from './Navbar';
 import vPollList from './PollList';
 import vPollDisplay from './PollDisplay';
+import vNewPollDisplay from './NewPollDisplay';
 
 export default {
   components: {
     vNavbar,
     vPollList,
     vPollDisplay,
+    vNewPollDisplay,
   },
 
   data() {
     return {
-      polls: [],
-      selectedPoll: null,
-      isNew: false,
+      pollSnapshots: [],
+      selectedPollSnapshot: null,
+      showNew: false,
     };
   },
 
   methods: {
-    refreshPolls() {
-      const selectedId = this.selectedPoll ? this.selectedPoll.id : null;
-      db.collection('polls')
-        .where('user', '==', firebase.auth().currentUser.uid)
-        .get()
-        .then((results) => {
-          this.polls = [];
-          results.forEach(doc => this.polls.push({ id: doc.id, ...doc.data() }));
-          if (selectedId) {
-            this.selectedPoll = this.polls.find(poll => poll.id === selectedId);
-          } else {
-            this.selectedPoll = null;
-          }
-        });
-    },
-
     onNewPollClicked() {
-      this.selectedPoll = null;
-      this.isNew = true;
+      this.selectedPollSnapshot = null;
+      this.showNew = true;
     },
 
     onNewPollCanceled() {
-      this.isNew = false;
+      this.showNew = false;
     },
 
     onPollSelected(poll) {
-      this.isNew = false;
-      this.selectedPoll = poll;
+      this.showNew = false;
+      this.selectedPollSnapshot = poll;
     },
 
-    onPollEdited(updatedPoll) {
-      // if poll previously existed (i.e., has an id)
-      if (updatedPoll.id) {
-        db.collection('polls')
-          .doc(updatedPoll.id)
-          .set(updatedPoll, { merge: true })
-          .then(() => this.refreshPolls());
-      } else {
-        const newPollRef = db.collection('polls').doc();
-        const newId = newPollRef.id;
-        newPollRef.set({ ...updatedPoll, id: newId })
-          .then(() => this.refreshPolls());
-      }
-    },
-
-    onDeletePollClicked() {
-      db.collection('polls')
-        .doc(this.selectedPoll.id)
-        .delete()
-        .then(() => {
-          this.selectedPoll = null;
-          this.refreshPolls();
-        });
+    onDelete() {
+      this.selectedPollSnapshot = null;
     },
   },
 
   mounted() {
-    this.refreshPolls();
+    db.collection('polls')
+      .where('user', '==', firebase.auth().currentUser.uid)
+      .onSnapshot((querySnapshot) => {
+        this.pollSnapshots = querySnapshot.docs;
+        if (querySnapshot.docChanges.length === 1) {
+          this.selectedPollSnapshot = querySnapshot.docChanges[0].doc;
+        }
+      });
   },
 };
 </script>

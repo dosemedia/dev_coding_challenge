@@ -1,9 +1,7 @@
 <template>
-  <div v-if="poll || isNew"
-       class="poll-display">
+  <div class="poll-display">
     <div class="field is-grouped">
-      <p v-if="!isNew"
-         class="control">
+      <p class="control">
         <a class="button is-danger is-outlined"
            @click="onClickDelete">
           <i class="fas fa-trash"
@@ -11,7 +9,7 @@
           Delete poll
         </a>
       </p>
-      <p v-show="!canEdit && !isNew"
+      <p v-show="!canEdit"
          class="control">
         <a class="button"
            @click="onClickEdit">
@@ -40,91 +38,119 @@
       </p>
     </div>
 
-    <div class="box">
-      <h3 v-if="!canEdit"
-          class="title is-3">
-        {{ poll.title }}
-      </h3>
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          Poll Details
+        </p>
+      </header>
 
-      <div v-if="canEdit"
-           class="field">
-        <div class="control">
-          <input class="input is-large"
-                 type="text"
-                 placeholder="Poll question"
-                 v-model="editedPoll.title">
-        </div>
-      </div>
+      <div class="card-content">
+        <h3 v-if="!canEdit"
+            class="title is-3">
+          {{ pollSnapshot.data().title }}
+        </h3>
 
-      <div v-if="editedPoll.options.length"
-           :key="i"
-           v-for="(option, i) in editedPoll.options">
-        <h4 v-if="!canEdit"
-            class="title is-4">
-          {{ option.title }}
-        </h4>
         <div v-if="canEdit"
-             class="field has-addons">
-          <div class="control"
-               @click="onDeleteOption(i)">
-            <a class="button is-shadowless">
-              <i class="fas fa-trash"></i>
-            </a>
+             class="field">
+          <div class="control">
+            <input class="input is-large"
+                   type="text"
+                   placeholder="Poll question"
+                   v-model="inputData.title"
+                   v-focus>
+          </div>
+        </div>
+
+        <div :key="i"
+             v-for="(option, i) in Object.values(inputData.options)">
+          <h4 v-if="!canEdit"
+              class="title is-4">
+            {{ option.title }}
+          </h4>
+          <div v-if="canEdit"
+               class="field has-addons">
+            <div class="control"
+                 @click="onDeleteOption(i)">
+              <a class="button is-shadowless">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+            <div class="control">
+              <input class="input"
+                     type="text"
+                     :placeholder="'Option ' + (i + 1)"
+                     v-model="option.title"
+                     style="padding-left: 1rem"
+                     v-focus>
+            </div>
+          </div>
+        </div>
+
+        <a v-show="canEdit"
+           class="add-option-btn button is-primary is-outlined is-fullwidth"
+           @click="onAddOption">
+          <i class="fas fa-plus"
+             style="margin-right: 0.5rem;"></i>
+          Add option
+        </a>
+      </div>
+    </div>
+
+    <div class="card">
+      <header class="card-header">
+        <p class="card-header-title">
+          Embed Link
+        </p>
+      </header>
+      <div class="card-content">
+        <div class="field is-grouped">
+          <div class="control is-expanded">
+            <input id="embed-link"
+                   class="input"
+                   type="text"
+                   :value="'https://dose-poll.firebaseapp.com/poll/' + pollSnapshot.id"
+                   readonly>
           </div>
           <div class="control">
-            <input class="input"
-                   type="text"
-                   :placeholder="'Option ' + (i + 1)"
-                   v-model="editedPoll.options[i].title"
-                   style="padding-left: 1rem">
+            <a class="button is-primary is-outlined"
+               @click="copyToClipboard">
+              <i class="far fa-copy"></i>
+            </a>
           </div>
         </div>
       </div>
-
-      <a v-show="canEdit"
-         class="add-option-btn button is-primary is-outlined is-fullwidth"
-         @click="onAddOption">
-        <i class="fas fa-plus"
-           style="margin-right: 0.5rem;"></i>
-        Add option
-      </a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['poll', 'isNew'],
+  props: ['pollSnapshot'],
 
   data() {
     return {
-      editedPoll: {
-        title: '',
-        options: [],
-        user: firebase.auth().currentUser.uid,
+      inputData: {
+        title: this.pollSnapshot.data().title,
+        options: this.pollSnapshot.data().options,
       },
       canEdit: false,
     };
   },
 
-  computed: {
-    userId() {
-      return firebase.auth().currentUser.uid;
-    },
-  },
-
   watch: {
-    isNew(newValue) {
-      this.canEdit = newValue;
-    },
-
-    poll(updatedValue) {
-      if (updatedValue) {
-        this.editedPoll = { ...updatedValue };
+    pollSnapshot(newSnapshot) {
+      // when selected poll changes
+      this.canEdit = false;
+      if (newSnapshot) {
+        this.inputData = {
+          title: newSnapshot.data().title,
+          options: newSnapshot.data().options,
+        };
       } else {
-        this.editedPoll = {
+        this.inputData = {
           title: '',
-          options: [],
+          options: {},
           user: firebase.auth().currentUser.uid,
         };
       }
@@ -132,8 +158,17 @@ export default {
   },
 
   methods: {
+    copyToClipboard() {
+      document.querySelector('#embed-link').select();
+      document.execCommand('copy');
+    },
+
     onClickDelete() {
-      this.$emit('deletepollclicked');
+      this.pollSnapshot.ref
+        .delete()
+        .then(() => {
+          this.$emit('delete');
+        });
     },
 
     onClickEdit() {
@@ -141,29 +176,32 @@ export default {
     },
 
     onCancel() {
-      if (this.isNew) {
-        // if adding new poll, send cancel event
-        this.$emit('newpollcanceled');
-      } else {
-        this.canEdit = false;
-        this.editedPoll = { ...this.poll };
-      }
+      this.canEdit = false;
+      this.inputData = {
+        title: this.pollSnapshot.data().title,
+        options: this.pollSnapshot.data().options,
+      };
     },
 
     onSave() {
       this.canEdit = false;
-      this.$emit('polledited', this.editedPoll);
-      this.onCancel();
+      this.pollSnapshot.ref
+        .update({
+          title: this.inputData.title,
+          options: this.inputData.options,
+        })
+        .then(() => {
+          this.onCancel();
+        });
     },
 
     onDeleteOption(i) {
-      const optionsCopy = [...this.editedPoll.options];
-      optionsCopy.splice(i, 1);
-      this.editedPoll.options = optionsCopy;
+      this.$delete(this.inputData.options, i);
     },
 
     onAddOption() {
-      this.editedPoll.options = [...this.editedPoll.options, { title: '', votes: 0.0 }];
+      const newIndex = Object.keys(this.inputData.options).length;
+      this.$set(this.inputData.options, newIndex, { title: '', votes: 0.0 });
     },
   },
 };
@@ -184,6 +222,10 @@ export default {
 
 .add-option-btn {
   margin-top: 0.5rem;
+}
+
+.card {
+  margin: 1rem 0;
 }
 </style>
 
