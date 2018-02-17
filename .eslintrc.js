@@ -12,5 +12,6 @@ module.exports = {
     globals: {
         'firebase': true,
         'db': true,
+        'Plotly': true,
     }
 };

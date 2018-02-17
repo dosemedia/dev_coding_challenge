@@ -2,13 +2,18 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import AuthPage from '@/components/AuthPage';
 import AdminPage from '@/components/AdminPage';
-// import UserService from '../services/user';
+import Widget from '@/components/Widget';
 
 Vue.use(Router);
 
 export default new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/poll/:id',
+      component: Widget,
+      name: 'widget',
+    },
     {
       path: '/auth',
       component: AuthPage,
