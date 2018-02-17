@@ -1,90 +1,127 @@
 <template>
-  <div>
-    <div class="field">
-      <p class="control has-icons-left has-icons-right">
-        <input class="input"
-               type="email"
-               placeholder="Email"
-               v-model="user.email">
-        <span class="icon is-small is-left">
-          <i class="fa fa-envelope"></i>
-        </span>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control has-icons-left">
-        <input class="input"
-               type="password"
-               placeholder="Password"
-               v-model="user.password">
-        <span class="icon is-small is-left">
-          <i class="fa fa-lock"></i>
-        </span>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control">
-        <button class="button"
-                @click="onSignup()">
-          Sign Up
-        </button>
-      </p>
-    </div>
+  <section class="hero is-light is-fullheight">
+    <div class="hero-body">
+      <div class="container">
+        <div class="column is-4 is-offset-4">
+          <div class="box">
+            <div class="tabs is-centered is-fullwidth">
+              <ul>
+                <li :class="{'is-active': isActive === 'login'}"
+                    @click="onSelect('login')">
+                  <a class="has-text-grey">Log in</a>
+                </li>
+                <li :class="{'is-active': isActive === 'signup'}"
+                    @click="onSelect('signup')">
+                  <a class="has-text-grey">Sign up</a>
+                </li>
+              </ul>
+            </div>
 
-    <div class="field">
-      <p class="control has-icons-left has-icons-right">
-        <input class="input"
-               type="email"
-               placeholder="Email"
-               v-model="user.email">
-        <span class="icon is-small is-left">
-          <i class="fa fa-envelope"></i>
-        </span>
-      </p>
+            <form v-if="isActive === 'login'">
+              <div class="field">
+                <div class="control">
+                  <input class="input"
+                         type="email"
+                         placeholder="Your email"
+                         v-model="user.email">
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="control">
+                  <input class="input"
+                         type="password"
+                         placeholder="Your password"
+                         v-model="user.password">
+                </div>
+              </div>
+              <button class="button is-primary is-fullwidth"
+                      @click.prevent="onLogin">
+                Log in
+              </button>
+            </form>
+
+            <form v-if="isActive === 'signup'">
+              <div class="field">
+                <div class="control">
+                  <input class="input"
+                         type="email"
+                         placeholder="Email"
+                         v-model="user.email">
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <input class="input"
+                         type="password"
+                         placeholder="Password"
+                         v-model="user.password">
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <input class="input"
+                         :class="{'is-success': passwordsMatch}"
+                         type="password"
+                         placeholder="Confirm password"
+                         v-model="user.confirmationPassword">
+                </div>
+                <p v-if="passwordsMatch"
+                   class="help is-success">Passwords match</p>
+              </div>
+              <button class="button is-primary is-fullwidth"
+                      @click.prevent="onSignup">
+                Sign up
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="field">
-      <p class="control has-icons-left">
-        <input class="input"
-               type="password"
-               placeholder="Password"
-               v-model="user.password">
-        <span class="icon is-small is-left">
-          <i class="fa fa-lock"></i>
-        </span>
-      </p>
-    </div>
-    <div class="field">
-      <p class="control">
-        <button class="button"
-                @click="onLogin()">
-          Log In
-        </button>
-      </p>
-    </div>
-  </div>
+  </section>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      showLogin: true,
+      isActive: 'login',
       user: {
         email: '',
         password: '',
+        confirmationPassword: '',
       },
     };
   },
 
+  computed: {
+    passwordsMatch() {
+      return (
+        this.user.password &&
+        this.user.confirmationPassword &&
+        this.user.password === this.user.confirmationPassword
+      );
+    },
+  },
+
   methods: {
+    onSelect(tabName) {
+      this.isActive = tabName;
+      this.user.email = '';
+      this.user.password = '';
+      this.user.confirmationPassword = '';
+    },
+
     onSignup() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.user.email, this.user.password)
-        .then(() => {
-          this.$router.replace('/admin');
-        })
-        .catch((error) => { console.error(error); });
+      if (this.passwordsMatch) {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.user.email, this.user.password)
+          .then(() => {
+            this.$router.replace('/admin');
+          })
+          .catch((error) => { console.error(error); });
+      }
     },
 
     onLogin() {
