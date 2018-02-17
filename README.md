@@ -1,6 +1,6 @@
 # DOSE Poll
 
-> Polling app developed for DOSE full-stack developer challenge
+> 📊 Polling app developed for DOSE full-stack developer challenge
 
 ![](https://i.imgur.com/jCYVfBh.png)
 
