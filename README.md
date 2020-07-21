@@ -3,52 +3,51 @@
 This is your opportunity to show us what you are capabale of!  We are looking for developers who :
 - Write clean, well structured code
 - Have attention to detail
-- Can solve difficult problems
-- Are creative
+- Use creativity to solve difficult problems
+- Can help others understand complex data
 
-## The DOSE News Poll
+## Part 1 - Data Collection
 
-For this coding challenge you're going to create a live news brodcast opinion poll widget.
-
-### Step 1 - Create Firebase App
+Create a single page web application that allows users to submit reviews for their Alexa device.
 
 Your web application should be implemented on Google's [Firebase](https://firebase.google.com/) platform.  Begin by setting up a **free** firebase account and starting an app project.
 
-### Step 2 - Implement Authentication
+Then, use [Vue.js](https://vuejs.org/) to implement a simple product review widget that collects the following review information:
 
-In your web application, implement a simple login workflow that allows poll authors to [create an account and login/logout](https://firebase.google.com/docs/auth/web/manage-users).  You do not need to include the ability to reset passwords, change passwords, or delete accounts.
+* Rating : 1-5 (required)
+* Device Variation : Charcoal Fabric, Sandstone Fabric, Black, White, Walnut Finish, Heather Gray Fabric, Oak Finish (required)
+* Review : Multi-line text field for the review (required, limit 500 characters)
+* Timestamp : [Server Timestamp](https://firebase.google.com/docs/firestore/manage-data/add-data#server_timestamp) 
 
-### Step 3 - Implement Admin UI
+The form should have a professional look and feel and perform validation.  We use the [Buefy framework for Vue](https://buefy.org/) in many of our projects.
 
-Create a user interface that allows authenticated users to create News Polls.  A poll consists of a question and one or more answers.  An example could be the question "Are puppies or kittens cuter?" along with answers "Kittens", and "Puppies".  Users should be able to see a list of all the questions they have ever created.  Users should be able to update/delete any of their questions/answers.  You may choose either [Realtime Database](https://firebase.google.com/docs/database/) or [Cloud Firestore](https://firebase.google.com/docs/firestore/) to store the data.  For the sake of time, you do not need to ensure that the application is secure (users can edit each other's questions if they know the id).
+Form submissions should be stored in the firestore database.
 
-### Step 4 - Implement Voting Widget
+Below the form, the 3 most recent review submissions should be displayed.  This list should use firestore's realtime updates to automatically update whenever a new review is submitted.
 
-Create a voting widget that allows participants to vote on a given question.  For example, if I embed the following on my news channel's website...
+You must deploy your solution with [firebase hosting](https://firebase.google.com/docs/hosting/deploying) so that it is available on a public url (you do not need to setup a custom domain).
 
-```
-<iframe src="https://your-app.firebaseapp.com/#/poll/pollidhere" style="width: 400px; height: 200px;"></iframe>
-```
+## Part 2 - Data Analysis
 
-...participants will see the poll and be able to choose their answer.
+Use Kaggle (or your favorite shareable Jupyter Notebook Service) to create a notebook that:
 
-### Step 5 - Provide Realtime Results
+Loads this Amazon Alexa review dataset : https://www.kaggle.com/sid321axn/amazon-alexa-reviews
 
-After a participant votes on a poll, they should see the current poll results.  These results should update in realtime as additional responses are submitted.
+Helps non-technical members of the team gain some insights from the data.  Some examples are:
+- Plot a histogram of the ratings.
+- Is there a variation that receives a disporportionate amount of low/high ratings?
+- Is there a specific word that appears frequently in 5 star (or 1 star) ratings?
 
-### Step 6 - Deploy
+## Questions?
 
-Once your app is complete, deploy it on [Firebase Hosting](https://firebase.google.com/docs/hosting/deploying).
+Please email ablondeau@dose.com with any questions/clarifications on this exercise.
 
-## Submitting Your Solution
+## Submission
 
 To submit your code challenge:
-- Store your solution at your favorite git host (like github or bitbucket).
-- Once complete, email ablondeau@dose.com and brenna@dose.com with a link to the repository as well as the Firebase Hosting url for your solution.
+Store your solution for Part 1 at your favorite git host (like github or bitbucket).
+Email ablondeau@dose.com with the following:
 
-## Bonus Points
-
-Here's how to get bonus ponts:
-- Include good documentation on how to build and run your app locally.
-- Provide tests for your app.
-- Use [Vue.js](https://vuejs.org/) and [Bulma](https://bulma.io/) for the UI (those are what we use at Dose).
+* Url to your repository for Part 1 (you can also branch from this repository and create a pull request - send the PR url instead)
+* Url to your working app for Part 1
+* Information to access your solution for Part 2
