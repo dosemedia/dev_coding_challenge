@@ -1,3 +1,12 @@
-section {
-  width: 500px;
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  .title {
+    margin-top: 5%;
+  }
+  section {
+    width: 800px;
+  }
 }
