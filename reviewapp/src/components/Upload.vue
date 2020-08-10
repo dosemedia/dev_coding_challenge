@@ -1,5 +1,6 @@
 <template>
   <section>
+    <h3 class="title">Optional: Upload Image</h3>
     <b-field class="file">
       <b-upload v-model="file" expanded>
         <a class="button is-primary is-fullwidth">
@@ -29,6 +30,7 @@
     </div>
   </section>
 </template>
+
 
 <script>
 export default {

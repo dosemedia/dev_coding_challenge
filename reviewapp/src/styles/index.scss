@@ -1,13 +1,6 @@
-.home {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: 2.5%;
-  .title {
-    margin-top: 5%;
-  }
-  section {
-    width: 800px;
-  }
-}
+// Local Imports
+
+@import "./home";
+@import "./navigation";
+@import "./colors";
+@import "./stars";
