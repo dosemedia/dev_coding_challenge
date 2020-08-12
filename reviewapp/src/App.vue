@@ -44,12 +44,12 @@ export default {
     submit: function(formData) {
       // Sends formData to Firebase Realtime Database
       reviewsRef.push({ ...formData, timestamp: moment().format() });
-      // Reset Reviews Array
-      this.reviewItems.length = 0;
       // Gets New Review Data
       this.getData();
     },
     getData: function() {
+      // Reset Reviews Array
+      this.reviewItems.length = 0;
       // Retrieves reviews from Firebase
       reviewsRef.on("value", (reviews) => {
         reviews.forEach((review) => {
