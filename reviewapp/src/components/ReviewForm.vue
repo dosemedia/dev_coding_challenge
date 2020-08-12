@@ -1,21 +1,49 @@
 <template>
   <section class="form">
-    <b-field label="Name">
-      <b-input v-model="formData.name" placeholder="Enter your name..."></b-input>
+    <!-- Name Field -->
+    <b-field
+      label="Name"
+      name="name"
+      :type="formErrors.name ? 'is-danger' : ''"
+      :message="formErrors.name ? 'Name Cannot Be Empty' : ''"
+    >
+      <b-input v-model="formData.name" @input="handleName" placeholder="Enter your name..."></b-input>
     </b-field>
-    <b-field label="Select Device Variation">
-      <b-select v-model="formData.deviceVariant" placeholder="Select a Device Variation" expanded>
-        <option v-for="device in options" v-bind:key="device" :value="device">{{device}}</option>
+
+    <!-- Select Device Field -->
+    <b-field
+      label="Select Device"
+      :type="formErrors.deviceVariant ? 'is-danger' : ''"
+      :message="
+        formErrors.deviceVariant ? 'Device Variant Cannot Be Empty' : ''
+      "
+    >
+      <b-select v-model="formData.deviceVariant" @input="handleDevice" expanded>
+        <option disabled value>Select Device Variant</option>
+        <option v-for="device in options" v-bind:key="device" :value="device">
+          {{
+          device
+          }}
+        </option>
       </b-select>
     </b-field>
-    <b-field label="Message">
+
+    <!-- Review Message Field -->
+    <b-field
+      label="Review"
+      :type="formErrors.message ? 'is-danger' : ''"
+      :message="formErrors.message ? 'Review Message Cannot Be Empty' : ''"
+    >
       <b-input
         v-model="formData.message"
         maxlength="500"
         type="textarea"
         placeholder="Write Review..."
+        @input="handleMessage"
       ></b-input>
     </b-field>
+
+    <!-- Rating Stars Block -->
     <div class="block">
       <h3 class="title">Rating:</h3>
       <div class="starContainer">
@@ -31,7 +59,7 @@
             type="radio"
             :native-value="star"
             v-model="formData.rating"
-            v-bind:star="star"
+            @input="handleRating"
           />
           <label :for="star">
             <b-icon icon="star" size="is-large"></b-icon>
@@ -39,6 +67,7 @@
         </div>
       </div>
     </div>
+    <b-field v-if="formErrors.rating" type="is-danger" message="Rating cannot be empty"></b-field>
     <!-- <Upload /> -->
     <b-button
       v-on:click="submit"
@@ -51,11 +80,7 @@
 </template>
 
 <script>
-// import Upload from "@/components/Upload.vue";
 export default {
-  components: {
-    // Upload,
-  },
   data() {
     return {
       stars: [5, 4, 3, 2, 1],
@@ -64,6 +89,12 @@ export default {
         deviceVariant: "",
         message: "",
         rating: "",
+      },
+      formErrors: {
+        name: false,
+        deviceVariant: false,
+        message: false,
+        rating: false,
       },
       options: [
         "Charcoal Fabric",
@@ -74,12 +105,88 @@ export default {
         "Heather Gray Fabric",
         "Oak Finish",
       ],
+      validCount: 0,
     };
   },
   methods: {
+    // Method to submit form
     submit() {
-      console.log(this.formData);
+      // Form Validation Loop
+      for (const key in this.formData) {
+        // If key is empty then throw error
+        if (this.formData[key] === "") {
+          this.formErrors[key] = true;
+          // Open buefy toast with error
+          let keyName = key.charAt(0).toUpperCase() + key.slice(1);
+          this.$buefy.toast.open({
+            duration: 2000,
+            message: `${keyName} cannot be empty`,
+            position: "is-top",
+            type: "is-danger",
+          });
+          // Key is not empty toggle error off
+        } else {
+          this.formErrors[key] = false;
+          this.validCount += 1;
+        }
+      }
+
+      // Check that all fields have been validated
+      if (this.validCount === 4) {
+        // Send form data up to parent component
+        this.$emit("submit-review", this.formData);
+        // Open buefy toast with success
+        // (Simulating)Not based on server response
+        this.$buefy.toast.open({
+          duration: 3000,
+          message: `Successfully Submitted Review`,
+          position: "is-top",
+          type: "is-success",
+        });
+        // Reset Form Data
+        this.formData = {
+          name: "",
+          deviceVariant: "",
+          message: "",
+          rating: 0,
+        };
+      }
+
+      // Update valid count and loading state
+      this.validCount = 0;
+      this.resetRating();
     },
+    // Input change handlers to toggle form errors
+    handleName(val) {
+      val !== ""
+        ? (this.formErrors.name = false)
+        : (this.formErrors.name = true);
+    },
+    handleDevice(val) {
+      val !== ""
+        ? (this.formErrors.deviceVariant = false)
+        : (this.formErrors.deviceVariant = true);
+    },
+    handleMessage(val) {
+      val !== ""
+        ? (this.formErrors.message = false)
+        : (this.formErrors.message = true);
+    },
+    handleRating(val) {
+      val !== 0
+        ? (this.formErrors.rating = false)
+        : (this.formErrors.rating = true);
+    },
+    resetRating() {
+      let stars = [...document.getElementsByClassName("star")];
+      // Remove selected class from stars
+      stars.forEach((element) => {
+        if (element.className === "star selected") {
+          element.classList.remove("selected");
+        }
+      });
+    },
+    // Method to select device rating
     rate(e) {
       // Variable Initialization
       const value = e.target.firstElementChild.value;

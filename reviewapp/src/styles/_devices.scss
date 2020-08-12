@@ -1,0 +1,27 @@
+.carousel-list.carousel {
+  box-shadow: none;
+}
+// Device Card
+.card {
+  display: flex;
+  justify-content: center;
+  .card-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .card-content {
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      .subtitle {
+        margin-top: -0.75rem;
+      }
+      .timestamp {
+        font-weight: bold;
+      }
+    }
+  }
+}

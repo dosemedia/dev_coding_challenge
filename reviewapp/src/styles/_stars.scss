@@ -25,11 +25,13 @@
 
     // Individual Star Rules
     .star {
-      transition: color 0.25s ease-in-out;
+      transition: all 0.25s ease-in-out;
       transition-delay: 0.1s;
+      margin-left: 3px;
       &:hover {
         color: $gold;
         transition-delay: 0.1s;
+        box-shadow: 1px #333;
         // Selects all descendant stars
         ~ .star {
           cursor: pointer;
@@ -39,16 +41,16 @@
       // Resizes Input Container
       .control.check {
         position: absolute;
-
+        // Gives Label Size
         label {
           height: 50px;
           width: 50px;
           background: transparent;
-          border: 1px solid $gold;
+          border: 2px solid $dark;
           border-right: none;
           border-left: none;
           &:nth-last-child(1) {
-            border: 1px solid $gold;
+            border: 2px solid $dark;
           }
         }
       }
@@ -56,9 +58,23 @@
     // Selected Star
     .star.selected {
       color: $gold;
+      box-shadow: inset 1px 1px 20px 20px #00000091;
+      border-radius: 5px;
       // Selects all descendant stars
       ~ .star {
         color: $gold;
+        border-radius: 5px;
+        box-shadow: inset 1px 1px 20px 20px #00000091;
+        .control.check {
+          label {
+            border-color: $gold;
+          }
+        }
+      }
+      .control.check {
+        label {
+          border-color: $gold;
+        }
       }
     }
   }
