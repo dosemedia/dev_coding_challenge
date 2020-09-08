@@ -12,7 +12,7 @@ Create a single page web application that allows users to submit reviews for the
 
 Your web application should be implemented on Google's [Firebase](https://firebase.google.com/) platform.  Begin by setting up a **free** firebase account and starting an app project.
 
-Then, use [Vue.js](https://vuejs.org/) to implement a simple product review widget that collects the following review information:
+Then, use your favorite web framework (we use [Vue.js](https://vuejs.org/) at Dose) to implement a simple product review widget that collects the following review information:
 
 * Rating : 1-5 (required)
 * Device Variation : Charcoal Fabric, Sandstone Fabric, Black, White, Walnut Finish, Heather Gray Fabric, Oak Finish (required)
@@ -21,7 +21,7 @@ Then, use [Vue.js](https://vuejs.org/) to implement a simple product review widg
 
 The form should have a professional look and feel and perform validation.  We use the [Buefy framework for Vue](https://buefy.org/) in many of our projects.
 
-Form submissions should be stored in the firestore database.
+Form submissions should be stored in the **Cloud Firestore** database in with your firebase project.
 
 Below the form, the 3 most recent review submissions should be displayed.  This list should use firestore's realtime updates to automatically update whenever a new review is submitted.
 
